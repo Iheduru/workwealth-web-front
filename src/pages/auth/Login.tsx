@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import InputWithIcon from "@/components/molecules/InputWithIcon";
-import { At, Smartphone, Lock, Eye, EyeOff } from "lucide-react";
+import { AtSign, Smartphone, Lock, Eye, EyeOff } from "lucide-react";
 import * as yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
@@ -136,7 +136,7 @@ const Login = () => {
                     name="emailOrPhone"
                     type="text"
                     placeholder="Email or phone number"
-                    icon={<At size={18} />}
+                    icon={<AtSign size={18} />}
                     error={touched.emailOrPhone && errors.emailOrPhone}
                     disabled={isLoading}
                   />

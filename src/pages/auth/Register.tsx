@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import InputWithIcon from "@/components/molecules/InputWithIcon";
 import FormLabel from "@/components/atoms/FormLabel";
-import { User, At, Smartphone, Lock, Eye, EyeOff } from "lucide-react";
+import { User, AtSign, Smartphone, Lock, Eye, EyeOff } from "lucide-react";
 import * as yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
@@ -114,7 +114,7 @@ const Register = () => {
                 name="email"
                 type="email"
                 placeholder="Email address"
-                icon={<At size={18} />}
+                icon={<AtSign size={18} />}
                 error={touched.email && errors.email}
                 disabled={isLoading}
               />
