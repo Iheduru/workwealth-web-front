@@ -1,0 +1,207 @@
+
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import WalletSummaryCard from "@/components/organisms/WalletSummaryCard";
+import QuickActionsPanel from "@/components/organisms/QuickActionsPanel";
+import { ArrowUpRight, BarChart3, AlertTriangle } from "lucide-react";
+import AlertBanner from "@/components/molecules/AlertBanner";
+
+const Dashboard = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  // Mock data - in a real app would come from API
+  const [transactions] = useState([
+    { id: 1, description: "Deposit from Bank", amount: "15,000", type: "credit", date: "Today, 10:24 AM" },
+    { id: 2, description: "Mobile Airtime", amount: "2,000", type: "debit", date: "Yesterday, 6:30 PM" },
+    { id: 3, description: "Savings Plan Contribution", amount: "5,000", type: "debit", date: "May 14, 9:15 AM" },
+  ]);
+  
+  const [loanDueDate] = useState("May 20, 2023");
+  const [loanAmount] = useState("25,000");
+  
+  const handleDeposit = () => {
+    toast({
+      title: "Deposit functionality",
+      description: "This feature would open a deposit modal in production."
+    });
+  };
+  
+  const handleWithdraw = () => {
+    toast({
+      title: "Withdrawal functionality",
+      description: "This feature would open a withdrawal modal in production."
+    });
+  };
+  
+  const handleTransfer = () => {
+    toast({
+      title: "Transfer functionality",
+      description: "This feature would open a transfer modal in production."
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-3xl font-bold tracking-tight">Welcome, Ade!</h2>
+      <p className="text-muted-foreground">
+        Here's an overview of your financial activities and options.
+      </p>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <WalletSummaryCard 
+          balance="85,750.00" 
+          lastTransaction={{
+            amount: "15,000.00",
+            date: "Today, 10:24 AM",
+            type: "credit"
+          }}
+        />
+        
+        <Card className="md:col-span-2">
+          <CardHeader className="pb-3">
+            <CardTitle>Upcoming Loan Payment</CardTitle>
+            <CardDescription>
+              Please ensure you have sufficient funds before the due date
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Due on {loanDueDate}</p>
+                <p className="text-2xl font-bold">NGN {loanAmount}</p>
+              </div>
+              <Button onClick={() => navigate("/loan")}>
+                View Loan Details
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      
+      <QuickActionsPanel 
+        onDeposit={handleDeposit}
+        onWithdraw={handleWithdraw}
+        onTransfer={handleTransfer}
+      />
+      
+      <AlertBanner
+        type="warning"
+        message="Complete your KYC verification to increase your transaction limits."
+        onClose={() => {}}
+      />
+      
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex justify-between items-center">
+            <CardTitle>Recent Transactions</CardTitle>
+            <Button variant="outline" size="sm" onClick={() => navigate("/transactions")}>
+              View All
+              <ArrowUpRight className="ml-1 h-4 w-4" />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="divide-y">
+            {transactions.map((transaction) => (
+              <div key={transaction.id} className="flex items-center justify-between p-4">
+                <div className="flex items-center">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
+                    transaction.type === "credit" ? "bg-ww-green-100 text-ww-green-500" : "bg-ww-purple-100 text-ww-purple-500"
+                  }`}>
+                    {transaction.type === "credit" ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium">{transaction.description}</p>
+                    <p className="text-sm text-muted-foreground">{transaction.date}</p>
+                  </div>
+                </div>
+                <p className={`font-medium ${transaction.type === "credit" ? "text-ww-green-600" : ""}`}>
+                  {transaction.type === "credit" ? "+" : "-"} NGN {transaction.amount}
+                </p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <BarChart3 className="mr-2 h-5 w-5" />
+              Savings Progress
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between text-sm mb-1">
+                  <span>House Fund</span>
+                  <span className="font-medium">60%</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div className="bg-ww-purple-500 h-2 rounded-full" style={{ width: "60%" }}></div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex items-center justify-between text-sm mb-1">
+                  <span>Emergency Fund</span>
+                  <span className="font-medium">25%</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div className="bg-ww-green-500 h-2 rounded-full" style={{ width: "25%" }}></div>
+                </div>
+              </div>
+              
+              <Button variant="outline" size="sm" className="mt-2" onClick={() => navigate("/savings")}>
+                Manage Savings Plans
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <AlertTriangle className="mr-2 h-5 w-5" />
+              Notifications
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="border-l-4 border-ww-purple-500 pl-4 py-1">
+                <p className="font-medium">Loan Reminder</p>
+                <p className="text-sm text-muted-foreground">Your loan payment is due in 5 days</p>
+              </div>
+              
+              <div className="border-l-4 border-ww-green-500 pl-4 py-1">
+                <p className="font-medium">Savings Goal Milestone</p>
+                <p className="text-sm text-muted-foreground">You've reached 60% of your House Fund target!</p>
+              </div>
+              
+              <div className="border-l-4 border-gray-300 pl-4 py-1">
+                <p className="font-medium">New Feature Available</p>
+                <p className="text-sm text-muted-foreground">Try our new bill payment service</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;

@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,33 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// WorkWealth custom colors
+				"ww-purple": {
+					DEFAULT: "#5D3FD3",
+					50: "#F5F3FD",
+					100: "#E8E4FC",
+					200: "#C5BCF7",
+					300: "#9F90F2",
+					400: "#7E69ED",
+					500: "#5D3FD3",
+					600: "#4A32A9",
+					700: "#38267F",
+					800: "#251954",
+					900: "#130D2A"
+				},
+				"ww-green": {
+					DEFAULT: "#25D366",
+					50: "#E9FBF0",
+					100: "#D4F8E1",
+					200: "#A8F1C3",
+					300: "#7DEAF6",
+					400: "#51E48A",
+					500: "#25D366",
+					600: "#1EA952",
+					700: "#177F3D",
+					800: "#0F5429",
+					900: "#082A14"
 				}
 			},
 			borderRadius: {
@@ -84,12 +112,20 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				'pulse-slow': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.8' },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-slow': 'pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+			},
+			fontFamily: {
+				sans: ['Inter', 'sans-serif'],
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
