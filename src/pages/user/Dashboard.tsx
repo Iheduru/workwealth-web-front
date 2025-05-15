@@ -1,47 +1,122 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
 import WalletSummaryCard from "@/components/organisms/WalletSummaryCard";
 import QuickActionsPanel from "@/components/organisms/QuickActionsPanel";
 import { ArrowUpRight, BarChart3, AlertTriangle } from "lucide-react";
 import AlertBanner from "@/components/molecules/AlertBanner";
+import { 
+  getWalletBalance, 
+  getRecentTransactions, 
+  addDeposit, 
+  addWithdrawal, 
+  addTransfer,
+  Transaction
+} from "@/services/transactionService";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   
-  // Mock data - in a real app would come from API
-  const [transactions] = useState([
-    { id: 1, description: "Deposit from Bank", amount: "15,000", type: "credit", date: "Today, 10:24 AM" },
-    { id: 2, description: "Mobile Airtime", amount: "2,000", type: "debit", date: "Yesterday, 6:30 PM" },
-    { id: 3, description: "Savings Plan Contribution", amount: "5,000", type: "debit", date: "May 14, 9:15 AM" },
-  ]);
+  // State for wallet balance and transactions
+  const [balance, setBalance] = useState("");
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [lastTransaction, setLastTransaction] = useState<{
+    amount: string;
+    date: string;
+    type: "credit" | "debit";
+  } | undefined>(undefined);
   
+  // Other state
   const [loanDueDate] = useState("May 20, 2023");
   const [loanAmount] = useState("25,000");
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   
-  const handleDeposit = () => {
-    toast({
-      title: "Deposit functionality",
-      description: "This feature would open a deposit modal in production."
-    });
+  // Initialize data
+  useEffect(() => {
+    // Get initial balance
+    const currentBalance = getWalletBalance();
+    setBalance(currentBalance);
+    
+    // Get recent transactions
+    const recentTransactions = getRecentTransactions();
+    setTransactions(recentTransactions);
+    
+    // Set last transaction if available
+    if (recentTransactions.length > 0) {
+      const latest = recentTransactions[0];
+      setLastTransaction({
+        amount: latest.amount,
+        date: latest.date,
+        type: latest.type,
+      });
+    }
+  }, []);
+  
+  // Handle deposit
+  const handleDeposit = (amount: number) => {
+    try {
+      const transaction = addDeposit(amount);
+      
+      // Update balance
+      setBalance(getWalletBalance());
+      
+      // Update transactions list
+      setTransactions([transaction, ...transactions].slice(0, 3));
+      
+      // Update last transaction
+      setLastTransaction({
+        amount: transaction.amount,
+        date: transaction.date,
+        type: transaction.type,
+      });
+    } catch (error) {
+      console.error("Deposit failed:", error);
+    }
   };
   
-  const handleWithdraw = () => {
-    toast({
-      title: "Withdrawal functionality",
-      description: "This feature would open a withdrawal modal in production."
-    });
+  // Handle withdrawal
+  const handleWithdraw = (amount: number) => {
+    try {
+      const transaction = addWithdrawal(amount);
+      
+      // Update balance
+      setBalance(getWalletBalance());
+      
+      // Update transactions list
+      setTransactions([transaction, ...transactions].slice(0, 3));
+      
+      // Update last transaction
+      setLastTransaction({
+        amount: transaction.amount,
+        date: transaction.date,
+        type: transaction.type,
+      });
+    } catch (error) {
+      console.error("Withdrawal failed:", error);
+    }
   };
   
-  const handleTransfer = () => {
-    toast({
-      title: "Transfer functionality",
-      description: "This feature would open a transfer modal in production."
-    });
+  // Handle transfer
+  const handleTransfer = (amount: number, recipient: string) => {
+    try {
+      const transaction = addTransfer(amount, recipient);
+      
+      // Update balance
+      setBalance(getWalletBalance());
+      
+      // Update transactions list
+      setTransactions([transaction, ...transactions].slice(0, 3));
+      
+      // Update last transaction
+      setLastTransaction({
+        amount: transaction.amount,
+        date: transaction.date,
+        type: transaction.type,
+      });
+    } catch (error) {
+      console.error("Transfer failed:", error);
+    }
   };
 
   return (
@@ -53,12 +128,9 @@ const Dashboard = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <WalletSummaryCard 
-          balance="85,750.00" 
-          lastTransaction={{
-            amount: "15,000.00",
-            date: "Today, 10:24 AM",
-            type: "credit"
-          }}
+          balance={balance} 
+          lastTransaction={lastTransaction}
+          onAddFunds={() => setIsDepositModalOpen(true)}
         />
         
         <Card className="md:col-span-2">
@@ -86,6 +158,7 @@ const Dashboard = () => {
         onDeposit={handleDeposit}
         onWithdraw={handleWithdraw}
         onTransfer={handleTransfer}
+        balance={parseInt(balance.replace(/,/g, ""), 10)}
       />
       
       <AlertBanner

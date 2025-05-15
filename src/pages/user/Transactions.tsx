@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,24 +11,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, Download } from "lucide-react";
-
-// Mock data - would come from API in real app
-const allTransactions = [
-  { id: 1, description: "Deposit from Bank", amount: "15,000", type: "credit", date: "May 15, 2023", category: "deposit" },
-  { id: 2, description: "Mobile Airtime", amount: "2,000", type: "debit", date: "May 14, 2023", category: "bills" },
-  { id: 3, description: "Savings Plan Contribution", amount: "5,000", type: "debit", date: "May 14, 2023", category: "savings" },
-  { id: 4, description: "Market Vendor Payment", amount: "8,500", type: "debit", date: "May 13, 2023", category: "shopping" },
-  { id: 5, description: "Loan Disbursement", amount: "50,000", type: "credit", date: "May 10, 2023", category: "loan" },
-  { id: 6, description: "Transfer to Oluwaseun", amount: "12,000", type: "debit", date: "May 8, 2023", category: "transfer" },
-  { id: 7, description: "Electricity Bill Payment", amount: "7,200", type: "debit", date: "May 5, 2023", category: "bills" },
-  { id: 8, description: "Salary Deposit", amount: "120,000", type: "credit", date: "May 1, 2023", category: "deposit" },
-];
+import { getAllTransactions, Transaction as TransactionType } from "@/services/transactionService";
 
 const Transactions = () => {
-  const [transactions, setTransactions] = useState(allTransactions);
+  const [allTransactions, setAllTransactions] = useState<TransactionType[]>([]);
+  const [transactions, setTransactions] = useState<TransactionType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
+
+  // Load transactions on component mount
+  useEffect(() => {
+    const loadedTransactions = getAllTransactions();
+    setAllTransactions(loadedTransactions);
+    setTransactions(loadedTransactions);
+  }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -66,8 +63,26 @@ const Transactions = () => {
   };
 
   const handleExport = () => {
-    // Mock export functionality
-    alert("This would export transactions as CSV in a real application");
+    // Mock export functionality - in a real app, this would generate a CSV
+    const headers = ["ID", "Description", "Amount", "Type", "Date", "Category"];
+    
+    // Convert transactions to CSV format
+    const csvContent = [
+      headers.join(","),
+      ...transactions.map(t => 
+        [t.id, t.description, t.amount, t.type, t.date, t.category].join(",")
+      )
+    ].join("\n");
+    
+    // Create a blob and download it
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `transactions_export_${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -157,8 +172,8 @@ const Transactions = () => {
                     <div className="col-span-2">
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         transaction.type === "credit" 
-                          ? "bg-ww-green-100 text-ww-green-800" 
-                          : "bg-ww-purple-100 text-ww-purple-800"
+                          ? "bg-ww-green-100 text-ww-green-800 dark:bg-ww-green-900/30 dark:text-ww-green-300" 
+                          : "bg-ww-purple-100 text-ww-purple-800 dark:bg-ww-purple-900/30 dark:text-ww-purple-300"
                       }`}>
                         {transaction.type === "credit" ? "Credit" : "Debit"}
                       </span>
