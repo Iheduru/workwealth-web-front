@@ -19,7 +19,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, FormikErrors } from "formik";
 import * as yup from "yup";
 import AlertBanner from "@/components/molecules/AlertBanner";
 
@@ -134,9 +134,9 @@ const LoanApplication = () => {
                         <span>₦5,000</span>
                         <span>₦500,000</span>
                       </div>
-                      {touched.amount && errors.amount && (
-                        <p className="text-sm text-red-500">{errors.amount}</p>
-                      )}
+                      {touched.amount && errors.amount ? (
+                        <p className="text-sm text-red-500">{String(errors.amount)}</p>
+                      ) : null}
                     </div>
 
                     <div className="space-y-2">
@@ -158,9 +158,9 @@ const LoanApplication = () => {
                         <span>1 month</span>
                         <span>12 months</span>
                       </div>
-                      {touched.term && errors.term && (
-                        <p className="text-sm text-red-500">{errors.term}</p>
-                      )}
+                      {touched.term && errors.term ? (
+                        <p className="text-sm text-red-500">{String(errors.term)}</p>
+                      ) : null}
                     </div>
 
                     <div className="space-y-2">
@@ -184,9 +184,9 @@ const LoanApplication = () => {
                           </Select>
                         )}
                       </Field>
-                      {touched.purpose && errors.purpose && (
-                        <p className="text-sm text-red-500">{errors.purpose}</p>
-                      )}
+                      {touched.purpose && errors.purpose ? (
+                        <p className="text-sm text-red-500">{String(errors.purpose)}</p>
+                      ) : null}
                     </div>
 
                     <Card className="bg-muted/40 border-dashed">
