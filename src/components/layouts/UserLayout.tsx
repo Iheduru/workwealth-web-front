@@ -20,6 +20,7 @@ import {
   Bell,
 } from "lucide-react";
 import Logo from "../atoms/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const UserLayout: React.FC = () => {
   const location = useLocation();
@@ -89,7 +90,8 @@ const UserLayout: React.FC = () => {
               </h1>
             </div>
             <div className="flex items-center">
-              <Button variant="ghost" size="sm" className="relative">
+              <ThemeToggle />
+              <Button variant="ghost" size="sm" className="relative ml-2">
                 <Bell size={20} />
                 {notifications > 0 && (
                   <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-ww-purple-500 text-white text-xs flex items-center justify-center translate-x-1 -translate-y-1">
@@ -98,7 +100,7 @@ const UserLayout: React.FC = () => {
                 )}
               </Button>
               <div className="flex ml-4 items-center">
-                <div className="h-8 w-8 rounded-full bg-ww-purple-200 flex items-center justify-center text-ww-purple-800 font-medium">
+                <div className="h-8 w-8 rounded-full bg-ww-purple-200 flex items-center justify-center text-ww-purple-800 font-medium dark:bg-ww-purple-800 dark:text-ww-purple-200">
                   AD
                 </div>
                 <div className="ml-2">

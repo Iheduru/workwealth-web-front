@@ -2,6 +2,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Logo from "../atoms/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const AuthLayout: React.FC = () => {
   return (
@@ -63,6 +64,10 @@ const AuthLayout: React.FC = () => {
       <div className="flex-grow flex flex-col p-6 md:w-1/2">
         <div className="md:hidden mb-8">
           <Logo variant="full" size="md" />
+        </div>
+        
+        <div className="flex justify-end mb-4">
+          <ThemeToggle />
         </div>
         
         <div className="flex-grow flex items-center justify-center py-8">

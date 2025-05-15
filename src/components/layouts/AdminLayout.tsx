@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Home, LogOut, Bell } from "lucide-react";
 import Logo from "../atoms/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
@@ -64,7 +65,8 @@ const AdminLayout: React.FC = () => {
               <h1 className="ml-4 font-semibold text-lg">Admin Dashboard</h1>
             </div>
             <div className="flex items-center">
-              <Button variant="ghost" size="sm" className="relative">
+              <ThemeToggle />
+              <Button variant="ghost" size="sm" className="relative ml-2">
                 <Bell size={20} />
                 {notifications > 0 && (
                   <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-ww-purple-500 text-white text-xs flex items-center justify-center translate-x-1 -translate-y-1">
