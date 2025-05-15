@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -278,7 +277,7 @@ const SavingsSetup = () => {
                         )}
                       </Field>
                       {touched.name && errors.name && (
-                        <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+                        <p className="text-sm text-red-500 mt-1">{String(errors.name)}</p>
                       )}
                     </div>
 
@@ -298,7 +297,7 @@ const SavingsSetup = () => {
                         )}
                       </Field>
                       {touched.target && errors.target && (
-                        <p className="text-sm text-red-500 mt-1">{errors.target}</p>
+                        <p className="text-sm text-red-500 mt-1">{String(errors.target)}</p>
                       )}
                     </div>
 
@@ -326,7 +325,7 @@ const SavingsSetup = () => {
                         )}
                       </Field>
                       {touched.frequency && errors.frequency && (
-                        <p className="text-sm text-red-500 mt-1">{errors.frequency}</p>
+                        <p className="text-sm text-red-500 mt-1">{String(errors.frequency)}</p>
                       )}
                     </div>
 
@@ -346,7 +345,7 @@ const SavingsSetup = () => {
                         )}
                       </Field>
                       {touched.amount && errors.amount && (
-                        <p className="text-sm text-red-500 mt-1">{errors.amount}</p>
+                        <p className="text-sm text-red-500 mt-1">{String(errors.amount)}</p>
                       )}
                     </div>
 
