@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
@@ -8,7 +8,9 @@ import InputWithIcon from "@/components/molecules/InputWithIcon";
 import FormLabel from "@/components/atoms/FormLabel";
 import { User, AtSign, Smartphone, Lock, Eye, EyeOff } from "lucide-react";
 import * as yup from "yup";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field } from "formik";
+import { useAuth } from "@/contexts/AuthContext";
+import { motion } from "framer-motion";
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
@@ -24,9 +26,8 @@ const registerSchema = yup.object().shape({
 });
 
 const Register = () => {
-  const navigate = useNavigate();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const { register, isLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleRegisterSubmit = async (values: {
@@ -37,26 +38,20 @@ const Register = () => {
     password: string;
     acceptTerms: boolean;
   }) => {
-    setIsLoading(true);
-    
-    // Mock API call
-    setTimeout(() => {
-      // Store mock auth token
-      localStorage.setItem("ww-auth-token", "mock-token-xyz");
-      localStorage.setItem("ww-user-role", "user");
-      
-      toast({
-        title: "Account created!",
-        description: "Your registration was successful."
-      });
-      
-      navigate("/kyc");
-      setIsLoading(false);
-    }, 1500);
+    try {
+      await register(values);
+    } catch (error) {
+      // Error is handled in the auth context
+      console.error(error);
+    }
   };
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-bold">Create an account</h1>
         <p className="text-muted-foreground mt-1">Join WorkWealth to start your financial journey</p>
@@ -202,7 +197,7 @@ const Register = () => {
           </Link>
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

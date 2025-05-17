@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,7 +8,9 @@ import { useToast } from "@/hooks/use-toast";
 import InputWithIcon from "@/components/molecules/InputWithIcon";
 import { AtSign, Smartphone, Lock, Eye, EyeOff } from "lucide-react";
 import * as yup from "yup";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field } from "formik";
+import { useAuth } from "@/contexts/AuthContext";
+import { motion } from "framer-motion";
 
 const loginSchema = yup.object().shape({
   emailOrPhone: yup.string().required("Email or phone number is required"),
@@ -22,49 +24,42 @@ const otpSchema = yup.object().shape({
 });
 
 const Login = () => {
-  const navigate = useNavigate();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, loginWithOtp, isLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [sentOtp, setSentOtp] = useState(false);
   const [otp, setOtp] = useState(["", "", "", ""]);
+  const [phone, setPhone] = useState("");
 
   const handleLoginSubmit = async (values: { emailOrPhone: string; password: string }) => {
-    setIsLoading(true);
-    
-    // Mock API call
-    setTimeout(() => {
-      // Store mock auth token and user role
-      localStorage.setItem("ww-auth-token", "mock-token-xyz");
-      localStorage.setItem("ww-user-role", "user");
-      
-      toast({
-        title: "Login successful!",
-        description: "Welcome back to WorkWealth."
-      });
-      
-      navigate("/dashboard");
-      setIsLoading(false);
-    }, 1500);
+    try {
+      await login(values.emailOrPhone, values.password);
+    } catch (error) {
+      // Error is handled in the auth context
+      console.error(error);
+    }
   };
 
   const handleSendOtp = async (values: { phone: string }) => {
-    setIsLoading(true);
-    
-    // Mock API call
-    setTimeout(() => {
+    try {
+      // Mock OTP sending
+      setPhone(values.phone);
       toast({
         title: "OTP Sent",
         description: `We've sent a verification code to ${values.phone}`
       });
-      
       setSentOtp(true);
-      setIsLoading(false);
-    }, 1500);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to send OTP",
+        description: "Please try again later."
+      });
+      console.error(error);
+    }
   };
 
   const handleOtpVerify = async () => {
-    setIsLoading(true);
     const otpValue = otp.join("");
     
     if (otpValue.length !== 4) {
@@ -73,24 +68,15 @@ const Login = () => {
         description: "Please enter a valid 4-digit OTP",
         variant: "destructive"
       });
-      setIsLoading(false);
       return;
     }
     
-    // Mock API call
-    setTimeout(() => {
-      // Store mock auth token and user role
-      localStorage.setItem("ww-auth-token", "mock-token-xyz");
-      localStorage.setItem("ww-user-role", "user");
-      
-      toast({
-        title: "OTP Verified",
-        description: "Login successful!"
-      });
-      
-      navigate("/dashboard");
-      setIsLoading(false);
-    }, 1500);
+    try {
+      await loginWithOtp(phone, otpValue);
+    } catch (error) {
+      // Error is handled in the auth context
+      console.error(error);
+    }
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -109,7 +95,11 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-bold">Welcome back</h1>
         <p className="text-muted-foreground mt-1">Sign in to your account</p>
@@ -264,7 +254,7 @@ const Login = () => {
           </Link>
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
