@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import WalletSummaryCard from "@/components/organisms/WalletSummaryCard";
 import QuickActionsPanel from "@/components/organisms/QuickActionsPanel";
+import BillPaymentPanel from "@/components/organisms/BillPaymentPanel";
 import { ArrowUpRight, BarChart3, AlertTriangle } from "lucide-react";
 import AlertBanner from "@/components/molecules/AlertBanner";
 import { 
@@ -12,8 +14,16 @@ import {
   addDeposit, 
   addWithdrawal, 
   addTransfer,
+  addBillPayment,
   Transaction
 } from "@/services/transactionService";
+
+// Import modals for bill payments
+import AirtimeModal from "@/components/modals/AirtimeModal";
+import DataBundleModal from "@/components/modals/DataBundleModal";
+import TvSubscriptionModal from "@/components/modals/TvSubscriptionModal";
+import ElectricityBillModal from "@/components/modals/ElectricityBillModal";
+import NetflixSubscriptionModal from "@/components/modals/NetflixSubscriptionModal";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -31,6 +41,13 @@ const Dashboard = () => {
   const [loanDueDate] = useState("May 20, 2023");
   const [loanAmount] = useState("25,000");
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  
+  // Bill payment modal states
+  const [isAirtimeModalOpen, setIsAirtimeModalOpen] = useState(false);
+  const [isDataModalOpen, setIsDataModalOpen] = useState(false);
+  const [isTvModalOpen, setIsTvModalOpen] = useState(false);
+  const [isElectricityModalOpen, setIsElectricityModalOpen] = useState(false);
+  const [isNetflixModalOpen, setIsNetflixModalOpen] = useState(false);
   
   // Initialize data
   useEffect(() => {
@@ -119,6 +136,76 @@ const Dashboard = () => {
     }
   };
 
+  // Handle bill payment
+  const handleBillPayment = (amount: number, description: string) => {
+    try {
+      const transaction = addBillPayment(amount, description);
+      
+      // Update balance
+      setBalance(getWalletBalance());
+      
+      // Update transactions list
+      setTransactions([transaction, ...transactions].slice(0, 3));
+      
+      // Update last transaction
+      setLastTransaction({
+        amount: transaction.amount,
+        date: transaction.date,
+        type: transaction.type,
+      });
+    } catch (error) {
+      console.error("Bill payment failed:", error);
+    }
+  };
+
+  // Handle airtime purchase
+  const handleAirtimePurchase = (amount: number, phoneNumber: string, network: string) => {
+    handleBillPayment(amount, `${network.toUpperCase()} Airtime for ${phoneNumber}`);
+  };
+
+  // Handle data purchase
+  const handleDataPurchase = (amount: number, phoneNumber: string, network: string, plan: string) => {
+    handleBillPayment(amount, `${network.toUpperCase()} ${plan} for ${phoneNumber}`);
+  };
+
+  // Handle TV subscription
+  const handleTvSubscription = (amount: number, smartCardNumber: string, provider: string, plan: string) => {
+    handleBillPayment(amount, `${provider.toUpperCase()} ${plan} for ${smartCardNumber}`);
+  };
+
+  // Handle Netflix subscription
+  const handleNetflixSubscription = (amount: number, email: string, plan: string) => {
+    handleBillPayment(amount, `Netflix ${plan} Subscription for ${email}`);
+  };
+
+  // Handle Electricity bill payment
+  const handleElectricityPayment = (amount: number, meterNumber: string, provider: string) => {
+    handleBillPayment(amount, `${provider.toUpperCase()} Electricity for Meter ${meterNumber}`);
+  };
+  
+  // Handle bill selection
+  const handleBillSelect = (billType: string) => {
+    switch (billType) {
+      case "airtime":
+        setIsAirtimeModalOpen(true);
+        break;
+      case "data":
+        setIsDataModalOpen(true);
+        break;
+      case "cable":
+        setIsTvModalOpen(true);
+        break;
+      case "netflix":
+        setIsNetflixModalOpen(true);
+        break;
+      case "electricity":
+        setIsElectricityModalOpen(true);
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-3xl font-bold tracking-tight">Welcome, Ade!</h2>
@@ -131,6 +218,7 @@ const Dashboard = () => {
           balance={balance} 
           lastTransaction={lastTransaction}
           onAddFunds={() => setIsDepositModalOpen(true)}
+          accountNumber="234 567 8910"
         />
         
         <Card className="md:col-span-2">
@@ -160,6 +248,8 @@ const Dashboard = () => {
         onTransfer={handleTransfer}
         balance={parseInt(balance.replace(/,/g, ""), 10)}
       />
+      
+      <BillPaymentPanel onSelectBillType={handleBillSelect} />
       
       <AlertBanner
         type="warning"
@@ -273,6 +363,42 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Bill Payment Modals */}
+      <AirtimeModal
+        isOpen={isAirtimeModalOpen}
+        onClose={() => setIsAirtimeModalOpen(false)}
+        onSuccess={handleAirtimePurchase}
+        maxAmount={parseInt(balance.replace(/,/g, ""), 10)}
+      />
+
+      <DataBundleModal
+        isOpen={isDataModalOpen}
+        onClose={() => setIsDataModalOpen(false)}
+        onSuccess={handleDataPurchase}
+        maxAmount={parseInt(balance.replace(/,/g, ""), 10)}
+      />
+
+      <TvSubscriptionModal
+        isOpen={isTvModalOpen}
+        onClose={() => setIsTvModalOpen(false)}
+        onSuccess={handleTvSubscription}
+        maxAmount={parseInt(balance.replace(/,/g, ""), 10)}
+      />
+
+      <NetflixSubscriptionModal
+        isOpen={isNetflixModalOpen}
+        onClose={() => setIsNetflixModalOpen(false)}
+        onSuccess={handleNetflixSubscription}
+        maxAmount={parseInt(balance.replace(/,/g, ""), 10)}
+      />
+
+      <ElectricityBillModal
+        isOpen={isElectricityModalOpen}
+        onClose={() => setIsElectricityModalOpen(false)}
+        onSuccess={handleElectricityPayment}
+        maxAmount={parseInt(balance.replace(/,/g, ""), 10)}
+      />
     </div>
   );
 };

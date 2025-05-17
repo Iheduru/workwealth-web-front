@@ -106,3 +106,24 @@ export const addTransfer = (amount: number, recipient: string): Transaction => {
   transactions = [newTransaction, ...transactions];
   return newTransaction;
 };
+
+// Add a bill payment transaction
+export const addBillPayment = (amount: number, description: string): Transaction => {
+  if (amount > walletBalance) {
+    throw new Error("Insufficient funds");
+  }
+  
+  walletBalance -= amount;
+  
+  const newTransaction: Transaction = {
+    id: nextId++,
+    description: description,
+    amount: formatAmount(amount),
+    type: "debit",
+    date: "Today, " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+    category: "bills"
+  };
+  
+  transactions = [newTransaction, ...transactions];
+  return newTransaction;
+};

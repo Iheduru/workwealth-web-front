@@ -2,6 +2,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { CreditCard } from "lucide-react";
 
 interface WalletSummaryCardProps {
   balance: string;
@@ -13,6 +14,7 @@ interface WalletSummaryCardProps {
   };
   className?: string;
   onAddFunds?: () => void;
+  accountNumber?: string;
 }
 
 const WalletSummaryCard: React.FC<WalletSummaryCardProps> = ({
@@ -21,23 +23,35 @@ const WalletSummaryCard: React.FC<WalletSummaryCardProps> = ({
   lastTransaction,
   className = "",
   onAddFunds,
+  accountNumber = "234 567 8910",
 }) => {
   return (
     <Card className={cn("overflow-hidden w-full", className)}>
-      <CardHeader className="bg-ww-purple-500 text-white pb-4 dark:bg-ww-purple-700">
-        <div className="text-xs font-medium text-ww-purple-100">Available Balance</div>
-        <div className="flex items-baseline mt-1">
-          <span className="text-sm mr-1">{currency}</span>
-          <span className="text-3xl font-bold">{balance}</span>
+      <CardHeader className="bg-gradient-to-r from-ww-purple-600 to-ww-purple-800 text-white pb-4 dark:from-ww-purple-800 dark:to-ww-purple-900 relative">
+        <div className="absolute top-4 right-6">
+          <CreditCard className="h-8 w-8 text-white/80" />
         </div>
-        {onAddFunds && (
-          <button 
-            onClick={onAddFunds}
-            className="text-xs bg-white/20 hover:bg-white/30 transition-colors px-3 py-1 rounded-full mt-2"
-          >
-            Add Funds
-          </button>
-        )}
+        <div className="flex flex-col space-y-1">
+          <div className="text-xs font-medium text-ww-purple-100">Available Balance</div>
+          <div className="flex items-baseline mt-1">
+            <span className="text-sm mr-1">{currency}</span>
+            <span className="text-3xl font-bold">{balance}</span>
+          </div>
+          
+          <div className="mt-3 pt-3 border-t border-white/20">
+            <div className="text-xs text-ww-purple-100">Account Number</div>
+            <div className="font-mono text-lg tracking-wider mt-1">{accountNumber}</div>
+          </div>
+          
+          {onAddFunds && (
+            <button 
+              onClick={onAddFunds}
+              className="text-xs bg-white/20 hover:bg-white/30 transition-colors px-3 py-1 rounded-full mt-2"
+            >
+              Add Funds
+            </button>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="pt-4">
         {lastTransaction ? (
