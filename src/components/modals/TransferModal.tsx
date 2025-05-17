@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Dialog,
@@ -12,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Loader } from "@/components/atoms/Loader";
+import Loader from "@/components/atoms/Loader";
 
 interface TransferModalProps {
   isOpen: boolean;

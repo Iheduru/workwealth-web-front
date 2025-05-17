@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Dialog,
@@ -19,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Loader } from "@/components/atoms/Loader";
+import Loader from "@/components/atoms/Loader";
 
 interface WithdrawModalProps {
   isOpen: boolean;
