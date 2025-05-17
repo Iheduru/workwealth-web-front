@@ -1,10 +1,8 @@
 import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
-import { Progress } from "@/components/ui/progress";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -12,376 +10,407 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Formik, Form, Field } from "formik";
-import * as yup from "yup";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  PlusIcon,
-  Trash2Icon,
-  PieChartIcon,
-} from "lucide-react";
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { CalendarIcon, PiggyBank, Target, Coins, ArrowRight, Calendar as CalendarIcon2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as yup from "yup";
+import { useNavigate } from "react-router-dom";
 
-const savingsSchema = yup.object().shape({
+// Define schemas for different savings types
+const regularSavingsSchema = yup.object().shape({
   name: yup.string().required("Plan name is required"),
-  target: yup
-    .number()
-    .required("Target amount is required")
-    .min(10000, "Minimum target is ₦10,000"),
+  amount: yup.number()
+    .required("Amount is required")
+    .positive("Must be a positive amount")
+    .min(100, "Minimum amount is 100"),
   frequency: yup.string().required("Frequency is required"),
-  amount: yup
-    .number()
-    .required("Contribution amount is required")
-    .min(1000, "Minimum contribution is ₦1,000"),
+  targetAmount: yup.number()
+    .required("Target amount is required")
+    .positive("Must be a positive amount")
+    .min(1000, "Target amount must be at least 1000"),
 });
 
-const SavingsSetup = () => {
+const targetSavingsSchema = yup.object().shape({
+  name: yup.string().required("Goal name is required"),
+  targetAmount: yup.number()
+    .required("Target amount is required")
+    .positive("Must be a positive amount")
+    .min(1000, "Target amount must be at least 1000"),
+  endDate: yup.date()
+    .required("Target date is required")
+    .min(new Date(), "Date must be in the future"),
+  initialDeposit: yup.number()
+    .required("Initial deposit is required")
+    .positive("Must be a positive amount")
+    .min(100, "Minimum initial deposit is 100"),
+});
+
+const SavingsSetup: React.FC = () => {
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate(); // Add this line to use navigation
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [createdPlanDetails, setCreatedPlanDetails] = useState<any>(null);
+  const [date, setDate] = useState<Date | undefined>(undefined);
 
-  // Mock data
-  const [savingsPlans] = useState([
-    {
-      id: 1,
-      name: "House Fund",
-      target: 2500000,
-      current: 1500000,
-      progress: 60,
-      frequency: "monthly",
-      amount: 50000,
-    },
-    {
-      id: 2,
-      name: "Emergency Fund",
-      target: 500000,
-      current: 125000,
-      progress: 25,
-      frequency: "weekly",
-      amount: 10000,
-    },
-  ]);
-
-  const handleSavingsSubmit = async (values: any) => {
-    setIsLoading(true);
+  const handleCreateRegularSavings = (values: any) => {
+    // In a real app, this would call an API to create the savings plan
+    console.log("Creating regular savings plan:", values);
     
-    // Mock API call
-    setTimeout(() => {
-      toast({
-        title: "Savings plan created",
-        description: "Your new savings plan has been set up successfully.",
-      });
-      
-      setIsLoading(false);
-    }, 1500);
+    // Mock creation success
+    setCreatedPlanDetails({
+      type: "Regular",
+      name: values.name,
+      amount: values.amount,
+      frequency: values.frequency,
+      targetAmount: values.targetAmount,
+      estimatedCompletion: calculateEstimatedCompletion(values.amount, values.frequency, values.targetAmount),
+    });
+    
+    setIsSuccessDialogOpen(true);
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
+  const handleCreateTargetSavings = (values: any) => {
+    // In a real app, this would call an API to create the savings plan
+    console.log("Creating target savings:", values);
+    
+    // Mock creation success
+    setCreatedPlanDetails({
+      type: "Target",
+      name: values.name,
+      targetAmount: values.targetAmount,
+      endDate: format(values.endDate, "PPP"),
+      initialDeposit: values.initialDeposit,
+      requiredMonthlyAmount: calculateRequiredMonthly(values.targetAmount, values.initialDeposit, values.endDate),
+    });
+    
+    setIsSuccessDialogOpen(true);
   };
 
-  const getFrequencyText = (frequency: string) => {
+  // Helper function to estimate completion time
+  const calculateEstimatedCompletion = (amount: number, frequency: string, targetAmount: number) => {
+    let periodsNeeded: number;
+    let periodType: string;
+    
     switch (frequency) {
       case "daily":
-        return "Daily";
+        periodsNeeded = Math.ceil(targetAmount / amount);
+        periodType = periodsNeeded === 1 ? "day" : "days";
+        break;
       case "weekly":
-        return "Weekly";
+        periodsNeeded = Math.ceil(targetAmount / amount);
+        periodType = periodsNeeded === 1 ? "week" : "weeks";
+        break;
       case "monthly":
-        return "Monthly";
+        periodsNeeded = Math.ceil(targetAmount / amount);
+        periodType = periodsNeeded === 1 ? "month" : "months";
+        break;
       default:
-        return frequency;
+        return "Unknown";
     }
+    
+    return `${periodsNeeded} ${periodType}`;
+  };
+
+  // Helper function to calculate required monthly savings to reach target
+  const calculateRequiredMonthly = (targetAmount: number, initialDeposit: number, endDate: Date) => {
+    const today = new Date();
+    const monthsDiff = (endDate.getFullYear() - today.getFullYear()) * 12 + 
+                       (endDate.getMonth() - today.getMonth());
+    const remainingAmount = targetAmount - initialDeposit;
+    
+    if (monthsDiff <= 0) return targetAmount;
+    return Math.ceil(remainingAmount / monthsDiff);
   };
 
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-bold tracking-tight">Savings</h2>
-
-      <Tabs defaultValue="plans">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="plans">My Savings Plans</TabsTrigger>
-          <TabsTrigger value="create">Create New Plan</TabsTrigger>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-3xl font-bold tracking-tight">Savings Plans</h2>
+        <Button variant="outline" className="mt-4 sm:mt-0" onClick={() => navigate("/savings/history")}>
+          View Existing Plans
+        </Button>
+      </div>
+      
+      <Tabs defaultValue="regular" className="w-full">
+        <TabsList className="grid grid-cols-2">
+          <TabsTrigger value="regular">Regular Savings</TabsTrigger>
+          <TabsTrigger value="target">Target Savings</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="plans" className="mt-6 space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            {savingsPlans.map((plan) => (
-              <Card key={plan.id}>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle>{plan.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {formatCurrency(plan.current)} saved of {formatCurrency(plan.target)} target
-                      </p>
-                    </div>
-                    <div className="flex items-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0"
-                        onClick={() => {
-                          toast({
-                            title: "Delete savings plan",
-                            description: "This would open a confirmation modal in production.",
-                          });
-                        }}
-                      >
-                        <Trash2Icon className="h-4 w-4 text-red-500" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Progress</span>
-                      <span className="font-medium">{plan.progress}%</span>
-                    </div>
-                    <Progress value={plan.progress} className="h-2" />
-                  </div>
-
-                  <div className="flex justify-between text-sm">
-                    <div>
-                      <p className="text-muted-foreground">Frequency</p>
-                      <p className="font-medium">{getFrequencyText(plan.frequency)}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Amount</p>
-                      <p className="font-medium">{formatCurrency(plan.amount)}</p>
-                    </div>
-                  </div>
-
-                  <Button
-                    className="w-full bg-ww-purple-500 hover:bg-ww-purple-600"
-                    onClick={() => {
-                      toast({
-                        title: "Add funds",
-                        description: "This would open a contribution modal in production.",
-                      });
-                    }}
-                  >
-                    Make Contribution
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-
-            <Card className="border-dashed border-2">
-              <CardContent className="p-6 flex flex-col items-center justify-center h-full">
-                <div className="w-12 h-12 rounded-full bg-ww-purple-100 flex items-center justify-center text-ww-purple-500 mb-4">
-                  <PlusIcon className="h-6 w-6" />
-                </div>
-                <h3 className="font-medium text-lg mb-1">Create New Plan</h3>
-                <p className="text-sm text-muted-foreground text-center mb-4">
-                  Set savings goals and contribute regularly
-                </p>
-                <Button
-                  variant="outline"
-                  className="border-ww-purple-200 text-ww-purple-700 hover:bg-ww-purple-50"
-                  onClick={() => {
-                    const tabsElement = document.querySelector('[value="create"]') as HTMLElement;
-                    tabsElement?.click();
-                  }}
-                >
-                  Start New Plan
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
+        
+        <TabsContent value="regular" className="pt-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <PieChartIcon className="mr-2 h-5 w-5" />
-                Savings Overview
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>Total Savings</span>
-                    <span className="font-medium">
-                      {formatCurrency(
-                        savingsPlans.reduce((sum, plan) => sum + plan.current, 0)
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>Total Target</span>
-                    <span className="font-medium">
-                      {formatCurrency(
-                        savingsPlans.reduce((sum, plan) => sum + plan.target, 0)
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>Overall Progress</span>
-                    <span className="font-medium">
-                      {Math.round(
-                        (savingsPlans.reduce((sum, plan) => sum + plan.current, 0) /
-                          savingsPlans.reduce((sum, plan) => sum + plan.target, 0)) *
-                          100
-                      )}
-                      %
-                    </span>
-                  </div>
-                </div>
-
-                <Progress
-                  value={Math.round(
-                    (savingsPlans.reduce((sum, plan) => sum + plan.current, 0) /
-                      savingsPlans.reduce((sum, plan) => sum + plan.target, 0)) *
-                      100
-                  )}
-                  className="h-2"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="create" className="mt-6 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Create New Savings Plan</CardTitle>
+              <CardTitle className="text-center sm:text-left">Set Up Regular Savings</CardTitle>
+              <CardDescription className="text-center sm:text-left">
+                Automatically save a fixed amount on a schedule
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Formik
                 initialValues={{
                   name: "",
-                  target: 100000,
+                  amount: 1000,
                   frequency: "monthly",
-                  amount: 10000,
+                  targetAmount: 10000,
                 }}
-                validationSchema={savingsSchema}
-                onSubmit={handleSavingsSubmit}
+                validationSchema={regularSavingsSchema}
+                onSubmit={handleCreateRegularSavings}
               >
-                {({ errors, touched }) => (
-                  <Form className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium" htmlFor="name">
-                        Plan Name
-                      </label>
-                      <Field name="name">
-                        {({ field }: { field: any }) => (
-                          <Input
-                            {...field}
+                {({ values, errors, touched, isSubmitting }) => (
+                  <Form className="space-y-6">
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="name">Plan Name</Label>
+                          <Field
+                            as={Input}
                             id="name"
-                            placeholder="e.g., House Fund, Emergency Fund"
-                            className="mt-1"
+                            name="name"
+                            placeholder="E.g., Emergency Fund"
                           />
-                        )}
-                      </Field>
-                      {touched.name && errors.name && (
-                        <p className="text-sm text-red-500 mt-1">{String(errors.name)}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium" htmlFor="target">
-                        Target Amount (₦)
-                      </label>
-                      <Field name="target">
-                        {({ field }: { field: any }) => (
-                          <Input
-                            {...field}
-                            id="target"
-                            type="number"
-                            placeholder="100000"
-                            className="mt-1"
-                          />
-                        )}
-                      </Field>
-                      {touched.target && errors.target && (
-                        <p className="text-sm text-red-500 mt-1">{String(errors.target)}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium" htmlFor="frequency">
-                        Contribution Frequency
-                      </label>
-                      <Field name="frequency">
-                        {({ field, form }: { field: any; form: any }) => (
-                          <Select
-                            value={field.value}
-                            onValueChange={(value) =>
-                              form.setFieldValue("frequency", value)
-                            }
-                          >
-                            <SelectTrigger id="frequency" className="mt-1">
-                              <SelectValue placeholder="Select frequency" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="daily">Daily</SelectItem>
-                              <SelectItem value="weekly">Weekly</SelectItem>
-                              <SelectItem value="monthly">Monthly</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      </Field>
-                      {touched.frequency && errors.frequency && (
-                        <p className="text-sm text-red-500 mt-1">{String(errors.frequency)}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium" htmlFor="amount">
-                        Contribution Amount (₦)
-                      </label>
-                      <Field name="amount">
-                        {({ field }: { field: any }) => (
-                          <Input
-                            {...field}
+                          {errors.name && touched.name && (
+                            <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+                          )}
+                        </div>
+                        <div>
+                          <Label htmlFor="frequency">Savings Frequency</Label>
+                          <Field name="frequency">
+                            {({ field, form }: any) => (
+                              <Select
+                                value={field.value}
+                                onValueChange={(value) => form.setFieldValue("frequency", value)}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select frequency" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="daily">Daily</SelectItem>
+                                  <SelectItem value="weekly">Weekly</SelectItem>
+                                  <SelectItem value="monthly">Monthly</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            )}
+                          </Field>
+                          {errors.frequency && touched.frequency && (
+                            <p className="text-sm text-red-500 mt-1">{errors.frequency}</p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="amount">Amount (₦)</Label>
+                          <Field
+                            as={Input}
                             id="amount"
+                            name="amount"
+                            type="number"
+                            placeholder="1000"
+                          />
+                          {errors.amount && touched.amount && (
+                            <p className="text-sm text-red-500 mt-1">{errors.amount}</p>
+                          )}
+                        </div>
+                        <div>
+                          <Label htmlFor="targetAmount">Target Amount (₦)</Label>
+                          <Field
+                            as={Input}
+                            id="targetAmount"
+                            name="targetAmount"
                             type="number"
                             placeholder="10000"
-                            className="mt-1"
                           />
-                        )}
-                      </Field>
-                      {touched.amount && errors.amount && (
-                        <p className="text-sm text-red-500 mt-1">{String(errors.amount)}</p>
-                      )}
+                          {errors.targetAmount && touched.targetAmount && (
+                            <p className="text-sm text-red-500 mt-1">{errors.targetAmount}</p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="bg-muted/50 p-4 rounded-md">
+                        <div className="text-sm font-medium mb-2">Savings Estimate</div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex items-center">
+                            <Coins className="h-4 w-4 mr-2 text-ww-purple-500" />
+                            <span className="text-sm">Each {values.frequency} payment:</span>
+                          </div>
+                          <div className="text-sm font-medium">₦ {Number(values.amount).toLocaleString()}</div>
+                          
+                          <div className="flex items-center">
+                            <Target className="h-4 w-4 mr-2 text-ww-purple-500" />
+                            <span className="text-sm">Goal amount:</span>
+                          </div>
+                          <div className="text-sm font-medium">₦ {Number(values.targetAmount).toLocaleString()}</div>
+                          
+                          <div className="flex items-center">
+                            <CalendarIcon2 className="h-4 w-4 mr-2 text-ww-purple-500" />
+                            <span className="text-sm">Estimated completion:</span>
+                          </div>
+                          <div className="text-sm font-medium">
+                            {calculateEstimatedCompletion(
+                              Number(values.amount),
+                              values.frequency,
+                              Number(values.targetAmount)
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-
-                    <Field name="amount">
-                      {({ field }: { field: any }) => (
-                        <Card className="bg-muted/40 border-dashed mt-4">
-                          <CardContent className="pt-6">
-                            <div className="space-y-2">
-                              <div className="flex justify-between text-sm">
-                                <span>Each contribution:</span>
-                                <span className="font-medium">
-                                  {formatCurrency(Number(field.value) || 0)}
-                                </span>
-                              </div>
-                              <div className="flex justify-between text-sm">
-                                <span>Estimated completion:</span>
-                                <span className="font-medium">
-                                  {Math.ceil(
-                                    Number(touched.target ? field.value : 100000) /
-                                      Number(field.value || 10000)
-                                  )}{" "}
-                                  months
-                                </span>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      )}
-                    </Field>
-
-                    <Button
-                      type="submit"
-                      className="w-full bg-ww-purple-500 hover:bg-ww-purple-600"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Creating..." : "Create Savings Plan"}
+                    
+                    <Button type="submit" className="w-full" disabled={isSubmitting}>
+                      Create Regular Savings Plan
+                    </Button>
+                  </Form>
+                )}
+              </Formik>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="target" className="pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-center sm:text-left">Set Up Target Savings</CardTitle>
+              <CardDescription className="text-center sm:text-left">
+                Save towards a goal with a specific target date
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Formik
+                initialValues={{
+                  name: "",
+                  targetAmount: 100000,
+                  endDate: new Date(new Date().setMonth(new Date().getMonth() + 6)),
+                  initialDeposit: 10000,
+                }}
+                validationSchema={targetSavingsSchema}
+                onSubmit={handleCreateTargetSavings}
+              >
+                {({ values, errors, touched, isSubmitting, setFieldValue }) => (
+                  <Form className="space-y-6">
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="name">Goal Name</Label>
+                        <Field
+                          as={Input}
+                          id="name"
+                          name="name"
+                          placeholder="E.g., New Car, House Down Payment"
+                        />
+                        {errors.name && touched.name && (
+                          <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+                        )}
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="targetAmount">Target Amount (₦)</Label>
+                          <Field
+                            as={Input}
+                            id="targetAmount"
+                            name="targetAmount"
+                            type="number"
+                            placeholder="100000"
+                          />
+                          {errors.targetAmount && touched.targetAmount && (
+                            <p className="text-sm text-red-500 mt-1">{errors.targetAmount}</p>
+                          )}
+                        </div>
+                        <div>
+                          <Label htmlFor="endDate">Target Date</Label>
+                          <div className="mt-1">
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-full justify-start text-left font-normal",
+                                    !values.endDate && "text-muted-foreground"
+                                  )}
+                                >
+                                  <CalendarIcon className="mr-2 h-4 w-4" />
+                                  {values.endDate ? format(values.endDate, "PPP") : <span>Pick a date</span>}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0">
+                                <Calendar
+                                  mode="single"
+                                  selected={values.endDate}
+                                  onSelect={(date) => {
+                                    if (date) {
+                                      setFieldValue("endDate", date);
+                                    }
+                                  }}
+                                  disabled={(date) => date < new Date()}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+                          {errors.endDate && touched.endDate && (
+                            <p className="text-sm text-red-500 mt-1">{errors.endDate}</p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="initialDeposit">Initial Deposit (₦)</Label>
+                        <Field
+                          as={Input}
+                          id="initialDeposit"
+                          name="initialDeposit"
+                          type="number"
+                          placeholder="10000"
+                        />
+                        {errors.initialDeposit && touched.initialDeposit && (
+                          <p className="text-sm text-red-500 mt-1">{errors.initialDeposit}</p>
+                        )}
+                      </div>
+                      
+                      <div className="bg-muted/50 p-4 rounded-md">
+                        <div className="text-sm font-medium mb-2">Savings Plan Summary</div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex items-center">
+                            <PiggyBank className="h-4 w-4 mr-2 text-ww-purple-500" />
+                            <span className="text-sm">Initial deposit:</span>
+                          </div>
+                          <div className="text-sm font-medium">₦ {Number(values.initialDeposit).toLocaleString()}</div>
+                          
+                          <div className="flex items-center">
+                            <Target className="h-4 w-4 mr-2 text-ww-purple-500" />
+                            <span className="text-sm">Goal amount:</span>
+                          </div>
+                          <div className="text-sm font-medium">₦ {Number(values.targetAmount).toLocaleString()}</div>
+                          
+                          <div className="flex items-center">
+                            <ArrowRight className="h-4 w-4 mr-2 text-ww-purple-500" />
+                            <span className="text-sm">Recommended monthly:</span>
+                          </div>
+                          <div className="text-sm font-medium">
+                            ₦ {calculateRequiredMonthly(
+                              Number(values.targetAmount),
+                              Number(values.initialDeposit),
+                              values.endDate
+                            ).toLocaleString()}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Button type="submit" className="w-full" disabled={isSubmitting}>
+                      Create Target Savings Plan
                     </Button>
                   </Form>
                 )}
@@ -390,6 +419,69 @@ const SavingsSetup = () => {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      <AlertDialog open={isSuccessDialogOpen} onOpenChange={setIsSuccessDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Savings Plan Created!</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your {createdPlanDetails?.type.toLowerCase()} savings plan has been created successfully.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          
+          {createdPlanDetails && (
+            <div className="py-4">
+              <div className="bg-muted p-4 rounded-md">
+                <p className="font-medium mb-2">{createdPlanDetails.name}</p>
+                
+                {createdPlanDetails.type === "Regular" ? (
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Amount:</span>
+                      <span>₦ {Number(createdPlanDetails.amount).toLocaleString()} / {createdPlanDetails.frequency}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Target:</span>
+                      <span>₦ {Number(createdPlanDetails.targetAmount).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Estimated completion:</span>
+                      <span>{createdPlanDetails.estimatedCompletion}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Target amount:</span>
+                      <span>₦ {Number(createdPlanDetails.targetAmount).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Target date:</span>
+                      <span>{createdPlanDetails.endDate}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Required monthly:</span>
+                      <span>₦ {Number(createdPlanDetails.requiredMonthlyAmount).toLocaleString()}</span>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="mt-4 pt-4 border-t border-border">
+                  <div className="text-sm text-muted-foreground">
+                    Your first payment will be processed shortly. You can manage your savings plans from the dashboard.
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <AlertDialogFooter>
+            <Button onClick={() => setIsSuccessDialogOpen(false)}>
+              Close
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

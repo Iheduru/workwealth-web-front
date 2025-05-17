@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { 
   Sidebar,
@@ -17,21 +17,55 @@ import {
   PieChart,
   Settings,
   LogOut,
-  Bell,
 } from "lucide-react";
 import Logo from "../atoms/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import NotificationCenter from "../organisms/NotificationCenter";
+import { 
+  getAllNotifications, 
+  markAsRead, 
+  markAllAsRead, 
+  clearAllNotifications 
+} from "@/services/notificationService";
 
 const UserLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [notifications] = useState(3); // Mock notification count
+  const [notifications, setNotifications] = useState(getAllNotifications());
+
+  // Refresh notifications on component mount and periodically
+  useEffect(() => {
+    // Initial load
+    setNotifications(getAllNotifications());
+    
+    // Periodic refresh
+    const refreshInterval = setInterval(() => {
+      setNotifications(getAllNotifications());
+    }, 60000); // Every minute
+    
+    return () => clearInterval(refreshInterval);
+  }, []);
 
   const handleLogout = () => {
     // Clear auth token and redirect to login
     localStorage.removeItem("ww-auth-token");
     localStorage.removeItem("ww-user-role");
     navigate("/login");
+  };
+
+  const handleMarkAsRead = (id: string) => {
+    markAsRead(id);
+    setNotifications(getAllNotifications());
+  };
+
+  const handleMarkAllAsRead = () => {
+    markAllAsRead();
+    setNotifications(getAllNotifications());
+  };
+
+  const handleClearAll = () => {
+    clearAllNotifications();
+    setNotifications([]);
   };
 
   const menuItems = [
@@ -91,14 +125,12 @@ const UserLayout: React.FC = () => {
             </div>
             <div className="flex items-center">
               <ThemeToggle />
-              <Button variant="ghost" size="sm" className="relative ml-2">
-                <Bell size={20} />
-                {notifications > 0 && (
-                  <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-ww-purple-500 text-white text-xs flex items-center justify-center translate-x-1 -translate-y-1">
-                    {notifications}
-                  </span>
-                )}
-              </Button>
+              <NotificationCenter 
+                notifications={notifications}
+                onMarkAsRead={handleMarkAsRead}
+                onMarkAllAsRead={handleMarkAllAsRead}
+                onClearAll={handleClearAll}
+              />
               <div className="flex ml-4 items-center">
                 <div className="h-8 w-8 rounded-full bg-ww-purple-200 flex items-center justify-center text-ww-purple-800 font-medium dark:bg-ww-purple-800 dark:text-ww-purple-200">
                   AD
