@@ -71,8 +71,8 @@ const AppRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes>
-        {/* Landing page */}
-        <Route path="/landing" element={<LandingPage />} />
+        {/* Landing page route - now directly at root path */}
+        <Route path="/" element={<LandingPage />} />
         
         {/* Public auth routes */}
         <Route element={<AuthLayout />}>
@@ -120,13 +120,8 @@ const AppRoutes = () => {
           <Route path="/admin" element={<AdminDashboard />} />
         </Route>
 
-        {/* Index redirect */}
-        <Route path="/" element={
-          isAuthenticated 
-            ? <Navigate to="/dashboard" replace />
-            : <Navigate to="/landing" replace />
-        } />
-
+        {/* Removed old index redirect that pointed to dashboard or landing */}
+        
         {/* Catch all route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
