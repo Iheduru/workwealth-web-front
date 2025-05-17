@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -182,7 +183,7 @@ const SavingsSetup: React.FC = () => {
                             placeholder="E.g., Emergency Fund"
                           />
                           {errors.name && touched.name && (
-                            <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+                            <p className="text-sm text-red-500 mt-1">{String(errors.name)}</p>
                           )}
                         </div>
                         <div>
@@ -205,7 +206,7 @@ const SavingsSetup: React.FC = () => {
                             )}
                           </Field>
                           {errors.frequency && touched.frequency && (
-                            <p className="text-sm text-red-500 mt-1">{errors.frequency}</p>
+                            <p className="text-sm text-red-500 mt-1">{String(errors.frequency)}</p>
                           )}
                         </div>
                       </div>
@@ -221,7 +222,7 @@ const SavingsSetup: React.FC = () => {
                             placeholder="1000"
                           />
                           {errors.amount && touched.amount && (
-                            <p className="text-sm text-red-500 mt-1">{errors.amount}</p>
+                            <p className="text-sm text-red-500 mt-1">{String(errors.amount)}</p>
                           )}
                         </div>
                         <div>
@@ -234,7 +235,7 @@ const SavingsSetup: React.FC = () => {
                             placeholder="10000"
                           />
                           {errors.targetAmount && touched.targetAmount && (
-                            <p className="text-sm text-red-500 mt-1">{errors.targetAmount}</p>
+                            <p className="text-sm text-red-500 mt-1">{String(errors.targetAmount)}</p>
                           )}
                         </div>
                       </div>
@@ -310,7 +311,7 @@ const SavingsSetup: React.FC = () => {
                           placeholder="E.g., New Car, House Down Payment"
                         />
                         {errors.name && touched.name && (
-                          <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+                          <p className="text-sm text-red-500 mt-1">{String(errors.name)}</p>
                         )}
                       </div>
                       
@@ -325,7 +326,7 @@ const SavingsSetup: React.FC = () => {
                             placeholder="100000"
                           />
                           {errors.targetAmount && touched.targetAmount && (
-                            <p className="text-sm text-red-500 mt-1">{errors.targetAmount}</p>
+                            <p className="text-sm text-red-500 mt-1">{String(errors.targetAmount)}</p>
                           )}
                         </div>
                         <div>
@@ -360,7 +361,7 @@ const SavingsSetup: React.FC = () => {
                             </Popover>
                           </div>
                           {errors.endDate && touched.endDate && (
-                            <p className="text-sm text-red-500 mt-1">{errors.endDate}</p>
+                            <p className="text-sm text-red-500 mt-1">{String(errors.endDate)}</p>
                           )}
                         </div>
                       </div>
@@ -375,7 +376,7 @@ const SavingsSetup: React.FC = () => {
                           placeholder="10000"
                         />
                         {errors.initialDeposit && touched.initialDeposit && (
-                          <p className="text-sm text-red-500 mt-1">{errors.initialDeposit}</p>
+                          <p className="text-sm text-red-500 mt-1">{String(errors.initialDeposit)}</p>
                         )}
                       </div>
                       

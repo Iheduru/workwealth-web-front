@@ -170,7 +170,7 @@ const LoanApplication: React.FC = () => {
                           </div>
                           {errors.amount && touched.amount && (
                             <p className="text-sm text-red-500 mt-1 flex items-center">
-                              <AlertCircle className="h-4 w-4 mr-1" /> {errors.amount}
+                              <AlertCircle className="h-4 w-4 mr-1" /> {String(errors.amount)}
                             </p>
                           )}
                         </div>
@@ -199,7 +199,7 @@ const LoanApplication: React.FC = () => {
                           </Field>
                           {errors.purpose && touched.purpose && (
                             <p className="text-sm text-red-500 mt-1 flex items-center">
-                              <AlertCircle className="h-4 w-4 mr-1" /> {errors.purpose}
+                              <AlertCircle className="h-4 w-4 mr-1" /> {String(errors.purpose)}
                             </p>
                           )}
                         </div>
@@ -223,7 +223,7 @@ const LoanApplication: React.FC = () => {
                           </div>
                           {errors.duration && touched.duration && (
                             <p className="text-sm text-red-500 mt-1 flex items-center">
-                              <AlertCircle className="h-4 w-4 mr-1" /> {errors.duration}
+                              <AlertCircle className="h-4 w-4 mr-1" /> {String(errors.duration)}
                             </p>
                           )}
                         </div>
@@ -320,7 +320,13 @@ const LoanApplication: React.FC = () => {
                   </p>
                   <Button 
                     variant="outline" 
-                    onClick={() => document.querySelector('[data-value="apply"]')?.click()}
+                    onClick={() => {
+                      // Fix: don't use click() method directly
+                      const applyTab = document.querySelector('[data-value="apply"]');
+                      if (applyTab instanceof HTMLElement) {
+                        applyTab.click();
+                      }
+                    }}
                     className="mt-4"
                   >
                     Start New Application
