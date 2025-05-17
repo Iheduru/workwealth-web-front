@@ -70,7 +70,7 @@ const Transactions = () => {
     const csvContent = [
       headers.join(","),
       ...transactions.map(t => 
-        [t.id, t.description, t.amount, t.type, t.date, t.category].join(",")
+        [t.id, t.description, t.amount, t.type, t.date, t.category || "uncategorized"].join(",")
       )
     ].join("\n");
     
@@ -160,7 +160,7 @@ const Transactions = () => {
                   <div key={transaction.id} className="grid grid-cols-12 gap-4 py-3 px-4 hover:bg-muted/30 text-sm">
                     <div className="col-span-6">
                       <p className="font-medium">{transaction.description}</p>
-                      <p className="text-muted-foreground text-xs capitalize">{transaction.category}</p>
+                      <p className="text-muted-foreground text-xs capitalize">{transaction.category || "uncategorized"}</p>
                     </div>
                     
                     <div className={`col-span-2 text-right font-medium ${

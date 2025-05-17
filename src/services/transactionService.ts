@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 // Transaction types
 export type TransactionType = "credit" | "debit";
 export type TransactionStatus = "completed" | "pending" | "failed";
+export type TransactionCategory = "deposit" | "withdrawal" | "transfer" | "loan" | "savings" | "bills" | "shopping";
 
 export interface Transaction {
   id: string;
@@ -15,6 +16,7 @@ export interface Transaction {
   reference?: string;
   recipient?: string;
   sender?: string;
+  category?: TransactionCategory;
 }
 
 // In-memory wallet and transactions
@@ -28,7 +30,8 @@ let transactions: Transaction[] = [
     description: "Deposit from Bank",
     status: "completed",
     reference: "DEP" + Math.random().toString().slice(2, 10),
-    sender: "Access Bank ****1234"
+    sender: "Access Bank ****1234",
+    category: "deposit"
   },
   {
     id: uuid(),
@@ -38,7 +41,8 @@ let transactions: Transaction[] = [
     description: "Transfer to Abayomi",
     status: "completed",
     reference: "TRF" + Math.random().toString().slice(2, 10),
-    recipient: "Abayomi ****5678"
+    recipient: "Abayomi ****5678",
+    category: "transfer"
   },
   {
     id: uuid(),
@@ -48,7 +52,8 @@ let transactions: Transaction[] = [
     description: "MTN Airtime Purchase",
     status: "completed",
     reference: "AIR" + Math.random().toString().slice(2, 10),
-    recipient: "MTN (080****1234)"
+    recipient: "MTN (080****1234)",
+    category: "bills"
   },
   {
     id: uuid(),
@@ -58,7 +63,8 @@ let transactions: Transaction[] = [
     description: "Loan Disbursement",
     status: "completed",
     reference: "LNP" + Math.random().toString().slice(2, 10),
-    sender: "WorkWealth Loans"
+    sender: "WorkWealth Loans",
+    category: "loan"
   },
   {
     id: uuid(),
@@ -68,7 +74,8 @@ let transactions: Transaction[] = [
     description: "DSTV Subscription",
     status: "completed",
     reference: "BIL" + Math.random().toString().slice(2, 10),
-    recipient: "DSTV Nigeria"
+    recipient: "DSTV Nigeria",
+    category: "bills"
   },
 ];
 
@@ -79,6 +86,11 @@ export const getWalletBalance = (): string => {
 
 // Get recent transactions
 export const getRecentTransactions = (): Transaction[] => {
+  return [...transactions];
+};
+
+// Get all transactions - new function
+export const getAllTransactions = (): Transaction[] => {
   return [...transactions];
 };
 
@@ -112,7 +124,8 @@ export const addDeposit = (amount: number): Transaction => {
     description: "Wallet Deposit",
     status: "completed",
     reference: "DEP" + Math.random().toString().slice(2, 10),
-    sender: "Bank Transfer"
+    sender: "Bank Transfer",
+    category: "deposit"
   };
   
   // Add to transactions
@@ -141,7 +154,8 @@ export const addWithdrawal = (amount: number): Transaction => {
     description: "Wallet Withdrawal",
     status: "completed",
     reference: "WTH" + Math.random().toString().slice(2, 10),
-    recipient: "Bank Account"
+    recipient: "Bank Account",
+    category: "withdrawal"
   };
   
   // Add to transactions
@@ -170,7 +184,8 @@ export const addTransfer = (amount: number, recipient: string): Transaction => {
     description: `Transfer to ${recipient}`,
     status: "completed",
     reference: "TRF" + Math.random().toString().slice(2, 10),
-    recipient: recipient
+    recipient: recipient,
+    category: "transfer"
   };
   
   // Add to transactions
@@ -199,7 +214,8 @@ export const addBillPayment = (amount: number, description: string): Transaction
     description,
     status: "completed",
     reference: "BIL" + Math.random().toString().slice(2, 10),
-    recipient: description.split(" ")[0]
+    recipient: description.split(" ")[0],
+    category: "bills"
   };
   
   // Add to transactions
