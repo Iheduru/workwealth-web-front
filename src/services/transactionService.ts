@@ -1,129 +1,209 @@
 
-// A simple service to manage wallet transactions in the frontend
-// In a real app, this would connect to a backend API
+import { v4 as uuid } from 'uuid';
 
 // Transaction types
 export type TransactionType = "credit" | "debit";
+export type TransactionStatus = "completed" | "pending" | "failed";
 
 export interface Transaction {
-  id: number;
-  description: string;
+  id: string;
   amount: string;
-  type: TransactionType;
   date: string;
-  category: string;
+  type: TransactionType;
+  description: string;
+  status: TransactionStatus;
+  reference?: string;
+  recipient?: string;
+  sender?: string;
 }
 
-// Mock data storage - would be replaced by API calls in a production app
-let walletBalance = 85750; // Starting balance in kobo (85,750 NGN)
+// In-memory wallet and transactions
+let walletBalance = "125,000";
 let transactions: Transaction[] = [
-  { id: 1, description: "Deposit from Bank", amount: "15,000", type: "credit", date: "Today, 10:24 AM", category: "deposit" },
-  { id: 2, description: "Mobile Airtime", amount: "2,000", type: "debit", date: "Yesterday, 6:30 PM", category: "bills" },
-  { id: 3, description: "Savings Plan Contribution", amount: "5,000", type: "debit", date: "May 14, 9:15 AM", category: "savings" },
+  {
+    id: uuid(),
+    amount: "25,000",
+    date: new Date(Date.now() - 1000 * 60 * 60 * 2).toLocaleString(),
+    type: "credit",
+    description: "Deposit from Bank",
+    status: "completed",
+    reference: "DEP" + Math.random().toString().slice(2, 10),
+    sender: "Access Bank ****1234"
+  },
+  {
+    id: uuid(),
+    amount: "15,000",
+    date: new Date(Date.now() - 1000 * 60 * 60 * 24).toLocaleString(),
+    type: "debit",
+    description: "Transfer to Abayomi",
+    status: "completed",
+    reference: "TRF" + Math.random().toString().slice(2, 10),
+    recipient: "Abayomi ****5678"
+  },
+  {
+    id: uuid(),
+    amount: "5,000",
+    date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toLocaleString(),
+    type: "debit",
+    description: "MTN Airtime Purchase",
+    status: "completed",
+    reference: "AIR" + Math.random().toString().slice(2, 10),
+    recipient: "MTN (080****1234)"
+  },
+  {
+    id: uuid(),
+    amount: "50,000",
+    date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toLocaleString(),
+    type: "credit",
+    description: "Loan Disbursement",
+    status: "completed",
+    reference: "LNP" + Math.random().toString().slice(2, 10),
+    sender: "WorkWealth Loans"
+  },
+  {
+    id: uuid(),
+    amount: "2,500",
+    date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toLocaleString(),
+    type: "debit",
+    description: "DSTV Subscription",
+    status: "completed",
+    reference: "BIL" + Math.random().toString().slice(2, 10),
+    recipient: "DSTV Nigeria"
+  },
 ];
-let nextId = 4;
 
-// Helper to convert amount string to number
-const parseAmount = (amount: string): number => {
-  return parseInt(amount.replace(/,/g, ""), 10);
-};
-
-// Helper to format number to comma-separated string
-const formatAmount = (amount: number): string => {
-  return amount.toLocaleString();
-};
-
-// Get current wallet balance
+// Get wallet balance
 export const getWalletBalance = (): string => {
-  return formatAmount(walletBalance);
+  return walletBalance;
 };
 
 // Get recent transactions
-export const getRecentTransactions = (limit: number = 3): Transaction[] => {
-  return [...transactions].slice(0, limit);
+export const getRecentTransactions = (): Transaction[] => {
+  return [...transactions];
 };
 
-// Get all transactions
-export const getAllTransactions = (): Transaction[] => {
-  return [...transactions];
+// Update wallet balance
+const updateWalletBalance = (amount: number, isCredit: boolean): string => {
+  // Convert string with commas to number
+  const currentBalance = parseFloat(walletBalance.replace(/,/g, ""));
+  
+  // Calculate new balance
+  const newBalance = isCredit
+    ? currentBalance + amount
+    : currentBalance - amount;
+  
+  // Format with commas and update
+  walletBalance = newBalance.toLocaleString();
+  
+  return walletBalance;
 };
 
 // Add a deposit transaction
 export const addDeposit = (amount: number): Transaction => {
-  walletBalance += amount;
+  // Update balance
+  updateWalletBalance(amount, true);
   
-  const newTransaction: Transaction = {
-    id: nextId++,
-    description: "Deposit to Wallet",
-    amount: formatAmount(amount),
+  // Create transaction
+  const transaction: Transaction = {
+    id: uuid(),
+    amount: amount.toLocaleString(),
+    date: new Date().toLocaleString(),
     type: "credit",
-    date: "Today, " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-    category: "deposit"
+    description: "Wallet Deposit",
+    status: "completed",
+    reference: "DEP" + Math.random().toString().slice(2, 10),
+    sender: "Bank Transfer"
   };
   
-  transactions = [newTransaction, ...transactions];
-  return newTransaction;
+  // Add to transactions
+  transactions = [transaction, ...transactions];
+  
+  return transaction;
 };
 
 // Add a withdrawal transaction
 export const addWithdrawal = (amount: number): Transaction => {
-  if (amount > walletBalance) {
-    throw new Error("Insufficient funds");
+  // Check if enough balance
+  const currentBalance = parseFloat(walletBalance.replace(/,/g, ""));
+  if (currentBalance < amount) {
+    throw new Error("Insufficient balance");
   }
   
-  walletBalance -= amount;
+  // Update balance
+  updateWalletBalance(amount, false);
   
-  const newTransaction: Transaction = {
-    id: nextId++,
-    description: "Withdrawal from Wallet",
-    amount: formatAmount(amount),
+  // Create transaction
+  const transaction: Transaction = {
+    id: uuid(),
+    amount: amount.toLocaleString(),
+    date: new Date().toLocaleString(),
     type: "debit",
-    date: "Today, " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-    category: "withdrawal"
+    description: "Wallet Withdrawal",
+    status: "completed",
+    reference: "WTH" + Math.random().toString().slice(2, 10),
+    recipient: "Bank Account"
   };
   
-  transactions = [newTransaction, ...transactions];
-  return newTransaction;
+  // Add to transactions
+  transactions = [transaction, ...transactions];
+  
+  return transaction;
 };
 
 // Add a transfer transaction
 export const addTransfer = (amount: number, recipient: string): Transaction => {
-  if (amount > walletBalance) {
-    throw new Error("Insufficient funds");
+  // Check if enough balance
+  const currentBalance = parseFloat(walletBalance.replace(/,/g, ""));
+  if (currentBalance < amount) {
+    throw new Error("Insufficient balance");
   }
   
-  walletBalance -= amount;
+  // Update balance
+  updateWalletBalance(amount, false);
   
-  const newTransaction: Transaction = {
-    id: nextId++,
-    description: `Transfer to ${recipient}`,
-    amount: formatAmount(amount),
+  // Create transaction
+  const transaction: Transaction = {
+    id: uuid(),
+    amount: amount.toLocaleString(),
+    date: new Date().toLocaleString(),
     type: "debit",
-    date: "Today, " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-    category: "transfer"
+    description: `Transfer to ${recipient}`,
+    status: "completed",
+    reference: "TRF" + Math.random().toString().slice(2, 10),
+    recipient: recipient
   };
   
-  transactions = [newTransaction, ...transactions];
-  return newTransaction;
+  // Add to transactions
+  transactions = [transaction, ...transactions];
+  
+  return transaction;
 };
 
 // Add a bill payment transaction
 export const addBillPayment = (amount: number, description: string): Transaction => {
-  if (amount > walletBalance) {
-    throw new Error("Insufficient funds");
+  // Check if enough balance
+  const currentBalance = parseFloat(walletBalance.replace(/,/g, ""));
+  if (currentBalance < amount) {
+    throw new Error("Insufficient balance");
   }
   
-  walletBalance -= amount;
+  // Update balance
+  updateWalletBalance(amount, false);
   
-  const newTransaction: Transaction = {
-    id: nextId++,
-    description: description,
-    amount: formatAmount(amount),
+  // Create transaction
+  const transaction: Transaction = {
+    id: uuid(),
+    amount: amount.toLocaleString(),
+    date: new Date().toLocaleString(),
     type: "debit",
-    date: "Today, " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-    category: "bills"
+    description,
+    status: "completed",
+    reference: "BIL" + Math.random().toString().slice(2, 10),
+    recipient: description.split(" ")[0]
   };
   
-  transactions = [newTransaction, ...transactions];
-  return newTransaction;
+  // Add to transactions
+  transactions = [transaction, ...transactions];
+  
+  return transaction;
 };

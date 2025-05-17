@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -24,6 +23,7 @@ import DataBundleModal from "@/components/modals/DataBundleModal";
 import TvSubscriptionModal from "@/components/modals/TvSubscriptionModal";
 import ElectricityBillModal from "@/components/modals/ElectricityBillModal";
 import NetflixSubscriptionModal from "@/components/modals/NetflixSubscriptionModal";
+import TransactionDetailsModal from "@/components/modals/TransactionDetailsModal";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -41,6 +41,10 @@ const Dashboard = () => {
   const [loanDueDate] = useState("May 20, 2023");
   const [loanAmount] = useState("25,000");
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  
+  // Transaction details modal state
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   
   // Bill payment modal states
   const [isAirtimeModalOpen, setIsAirtimeModalOpen] = useState(false);
@@ -206,6 +210,12 @@ const Dashboard = () => {
     }
   };
 
+  // Handle opening transaction details
+  const handleOpenTransactionDetails = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setIsTransactionModalOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-3xl font-bold tracking-tight">Welcome, Ade!</h2>
@@ -270,7 +280,11 @@ const Dashboard = () => {
         <CardContent className="p-0">
           <div className="divide-y">
             {transactions.map((transaction) => (
-              <div key={transaction.id} className="flex items-center justify-between p-4">
+              <div 
+                key={transaction.id} 
+                className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => handleOpenTransactionDetails(transaction)}
+              >
                 <div className="flex items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
                     transaction.type === "credit" ? "bg-ww-green-100 text-ww-green-500" : "bg-ww-purple-100 text-ww-purple-500"
@@ -398,6 +412,13 @@ const Dashboard = () => {
         onClose={() => setIsElectricityModalOpen(false)}
         onSuccess={handleElectricityPayment}
         maxAmount={parseInt(balance.replace(/,/g, ""), 10)}
+      />
+
+      {/* Transaction Details Modal */}
+      <TransactionDetailsModal
+        isOpen={isTransactionModalOpen}
+        onClose={() => setIsTransactionModalOpen(false)}
+        transaction={selectedTransaction}
       />
     </div>
   );
