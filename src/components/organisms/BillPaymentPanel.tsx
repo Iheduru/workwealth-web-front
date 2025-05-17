@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tv, Smartphone, Wifi, CreditCard, Netflix } from "lucide-react";
+import { Tv, Smartphone, Wifi, CreditCard, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BillPaymentPanelProps {
@@ -19,7 +19,7 @@ const BillPaymentPanel: React.FC<BillPaymentPanelProps> = ({
     { id: "data", name: "Internet Data", icon: <Wifi className="h-5 w-5 mb-1 text-ww-green-500" /> },
     { id: "cable", name: "Cable TV", icon: <Tv className="h-5 w-5 mb-1 text-ww-green-500" /> },
     { id: "electricity", name: "Electricity", icon: <CreditCard className="h-5 w-5 mb-1 text-ww-green-500" /> },
-    { id: "netflix", name: "Netflix", icon: <Netflix className="h-5 w-5 mb-1 text-ww-green-500" /> },
+    { id: "netflix", name: "Netflix", icon: <Video className="h-5 w-5 mb-1 text-ww-green-500" /> },
   ];
 
   return (
