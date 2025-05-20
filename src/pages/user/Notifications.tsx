@@ -9,7 +9,8 @@ import {
   clearAllNotifications,
   Notification 
 } from "@/services/notificationService";
-import { Bell, CheckCheck, Trash2 } from "lucide-react";
+import { Bell, CheckCheck, Trash2, CreditCard, Coins, Calendar, Settings } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 const NotificationsPage = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -41,8 +42,22 @@ const NotificationsPage = () => {
     return true;
   });
 
-  const getNotificationDate = (timestamp: number) => {
-    const date = new Date(timestamp);
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case "loan":
+        return <CreditCard className="h-5 w-5" />;
+      case "savings":
+        return <Coins className="h-5 w-5" />;
+      case "transaction":
+        return <Calendar className="h-5 w-5" />;
+      case "system":
+      default:
+        return <Settings className="h-5 w-5" />;
+    }
+  };
+
+  const getNotificationDate = (timestamp: Date) => {
+    const date = timestamp;
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
     
@@ -51,7 +66,7 @@ const NotificationsPage = () => {
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
     
-    return date.toLocaleDateString();
+    return formatDate(date);
   };
 
   return (
@@ -118,13 +133,15 @@ const NotificationsPage = () => {
                   className={`flex p-4 ${!notification.read ? "bg-muted/50" : ""}`}
                 >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
-                    notification.type === "alert" 
-                      ? "bg-amber-100 text-amber-500" 
-                      : notification.type === "success"
-                        ? "bg-ww-green-100 text-ww-green-500"
-                        : "bg-ww-purple-100 text-ww-purple-500"
+                    notification.type === "loan" 
+                      ? "bg-blue-100 text-blue-600" 
+                      : notification.type === "savings"
+                        ? "bg-ww-green-100 text-ww-green-600"
+                        : notification.type === "transaction"
+                          ? "bg-amber-100 text-amber-600" 
+                          : "bg-ww-purple-100 text-ww-purple-600"
                   }`}>
-                    <notification.icon className="h-5 w-5" />
+                    {getNotificationIcon(notification.type)}
                   </div>
                   
                   <div className="flex-1">
