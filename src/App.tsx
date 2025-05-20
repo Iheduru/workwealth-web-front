@@ -19,6 +19,7 @@ import Transactions from "./pages/user/Transactions";
 import LoanApplication from "./pages/user/LoanApplication";
 import SavingsSetup from "./pages/user/SavingsSetup";
 import UserSettings from "./pages/user/UserSettings";
+import Notifications from "./pages/user/Notifications";
 
 // Agent Pages
 import AgentDashboard from "./pages/agent/AgentDashboard";
@@ -109,6 +110,7 @@ const AppRoutes = () => {
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/loan" element={<LoanApplication />} />
           <Route path="/savings" element={<SavingsSetup />} />
+          <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<UserSettings />} />
         </Route>
 

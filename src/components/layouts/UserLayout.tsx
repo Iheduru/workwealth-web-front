@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { 
@@ -17,6 +16,7 @@ import {
   PieChart,
   Settings,
   LogOut,
+  Bell
 } from "lucide-react";
 import Logo from "../atoms/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -73,6 +73,7 @@ const UserLayout: React.FC = () => {
     { path: "/transactions", label: "Transactions", icon: <List size={20} /> },
     { path: "/loan", label: "Loan", icon: <CreditCard size={20} /> },
     { path: "/savings", label: "Savings", icon: <PieChart size={20} /> },
+    { path: "/notifications", label: "Notifications", icon: <Bell size={20} /> },
     { path: "/settings", label: "Settings", icon: <Settings size={20} /> },
   ];
 
