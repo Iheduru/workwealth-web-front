@@ -57,29 +57,47 @@ const LandingPage = () => {
         <div className="container mx-auto px-4 py-6">
           <nav className="flex justify-between items-center">
             <Logo variant="full" size="md" className="text-white" />
-            <div className="flex gap-4">
-              <Button variant="ghost" className="text-white hover:text-white hover:bg-white/20">
-                About
-              </Button>
-              <Button variant="ghost" className="text-white hover:text-white hover:bg-white/20">
-                Features
-              </Button>
-              <Button variant="ghost" className="text-white hover:text-white hover:bg-white/20">
-                Contact
-              </Button>
+            <div className="hidden md:flex gap-4">
+              <Link to="/about">
+                <Button variant="ghost" className="text-white hover:text-white hover:bg-white/20">
+                  About
+                </Button>
+              </Link>
+              <Link to="/features">
+                <Button variant="ghost" className="text-white hover:text-white hover:bg-white/20">
+                  Features
+                </Button>
+              </Link>
+              <Link to="/contact">
+                <Button variant="ghost" className="text-white hover:text-white hover:bg-white/20">
+                  Contact
+                </Button>
+              </Link>
               <Link to="/login">
                 <Button variant="outline" className="border-white text-white hover:bg-white hover:text-ww-purple-600">
                   Sign In
                 </Button>
               </Link>
             </div>
+            
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <Button variant="ghost" className="text-white p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="3" y1="12" x2="21" y2="12"></line>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+              </Button>
+            </div>
           </nav>
           
-          <div className="py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="py-16 md:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
               initial={{ x: -50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.8 }}
+              className="text-left"
             >
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
                 Financial Solutions for <span className="text-yellow-300">Everyone</span>
@@ -93,9 +111,11 @@ const LandingPage = () => {
                     Get Started
                   </Button>
                 </Link>
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/20 font-semibold">
-                  Learn More
-                </Button>
+                <Link to="/features">
+                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/20 font-semibold">
+                    Learn More
+                  </Button>
+                </Link>
               </div>
             </motion.div>
             
@@ -203,21 +223,21 @@ const LandingPage = () => {
                     <PiggyBank size={24} />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Smart Savings</h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-gray-600">
                     Set savings goals, create automatic deposits, and watch your money grow with competitive interest rates.
                   </p>
                   <ul className="mt-4 space-y-2">
                     <li className="flex items-center">
                       <Check size={16} className="text-green-500 mr-2" />
-                      <span className="text-sm">Daily, weekly or monthly savings</span>
+                      <span className="text-sm text-gray-600">Daily, weekly or monthly savings</span>
                     </li>
                     <li className="flex items-center">
                       <Check size={16} className="text-green-500 mr-2" />
-                      <span className="text-sm">Target-based savings plans</span>
+                      <span className="text-sm text-gray-600">Target-based savings plans</span>
                     </li>
                     <li className="flex items-center">
                       <Check size={16} className="text-green-500 mr-2" />
-                      <span className="text-sm">Group savings options</span>
+                      <span className="text-sm text-gray-600">Group savings options</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -231,21 +251,21 @@ const LandingPage = () => {
                     <CreditCard size={24} />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Quick Loans</h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-gray-600">
                     Access affordable credit when you need it most, with quick approvals and flexible repayment terms.
                   </p>
                   <ul className="mt-4 space-y-2">
                     <li className="flex items-center">
                       <Check size={16} className="text-green-500 mr-2" />
-                      <span className="text-sm">No collateral required</span>
+                      <span className="text-sm text-gray-600">No collateral required</span>
                     </li>
                     <li className="flex items-center">
                       <Check size={16} className="text-green-500 mr-2" />
-                      <span className="text-sm">Approval in under 24 hours</span>
+                      <span className="text-sm text-gray-600">Approval in under 24 hours</span>
                     </li>
                     <li className="flex items-center">
                       <Check size={16} className="text-green-500 mr-2" />
-                      <span className="text-sm">Competitive interest rates</span>
+                      <span className="text-sm text-gray-600">Competitive interest rates</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -259,21 +279,21 @@ const LandingPage = () => {
                     <Shield size={24} />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Secure Transactions</h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-gray-600">
                     Send and receive money instantly with bank-level security and minimal transaction fees.
                   </p>
                   <ul className="mt-4 space-y-2">
                     <li className="flex items-center">
                       <Check size={16} className="text-green-500 mr-2" />
-                      <span className="text-sm">Bank transfers</span>
+                      <span className="text-sm text-gray-600">Bank transfers</span>
                     </li>
                     <li className="flex items-center">
                       <Check size={16} className="text-green-500 mr-2" />
-                      <span className="text-sm">Bill payments</span>
+                      <span className="text-sm text-gray-600">Bill payments</span>
                     </li>
                     <li className="flex items-center">
                       <Check size={16} className="text-green-500 mr-2" />
-                      <span className="text-sm">Airtime & data purchase</span>
+                      <span className="text-sm text-gray-600">Airtime & data purchase</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -337,7 +357,7 @@ const LandingPage = () => {
                   )}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                <p className="text-muted-foreground">{item.description}</p>
+                <p className="text-gray-600">{item.description}</p>
               </motion.div>
             ))}
           </div>
@@ -390,10 +410,10 @@ const LandingPage = () => {
             <div>
               <h4 className="text-white font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-sm">
-                <li>About Us</li>
+                <li><Link to="/about" className="hover:text-white">About Us</Link></li>
+                <li><Link to="/features" className="hover:text-white">Features</Link></li>
+                <li><Link to="/contact" className="hover:text-white">Contact</Link></li>
                 <li>Careers</li>
-                <li>Blog</li>
-                <li>Press</li>
               </ul>
             </div>
             

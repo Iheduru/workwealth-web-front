@@ -35,6 +35,11 @@ import AdminLayout from "./components/layouts/AdminLayout";
 // Landing Page
 import LandingPage from "./pages/LandingPage";
 
+// Public Pages
+import AboutPage from "./pages/AboutPage";
+import FeaturesPage from "./pages/FeaturesPage";
+import ContactPage from "./pages/ContactPage";
+
 // NotFound
 import NotFound from "./pages/NotFound";
 
@@ -73,6 +78,11 @@ const AppRoutes = () => {
       <Routes>
         {/* Landing page route - now directly at root path */}
         <Route path="/" element={<LandingPage />} />
+        
+        {/* Public pages */}
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         
         {/* Public auth routes */}
         <Route element={<AuthLayout />}>
@@ -120,8 +130,6 @@ const AppRoutes = () => {
           <Route path="/admin" element={<AdminDashboard />} />
         </Route>
 
-        {/* Removed old index redirect that pointed to dashboard or landing */}
-        
         {/* Catch all route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
