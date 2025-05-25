@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Formik, Form, Field } from "formik";
 import { Loader, AlertCircle, Calendar, CreditCard, Banknote, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 
 // Define schema for loan application
@@ -36,6 +36,7 @@ const loanSchema = yup.object().shape({
 
 const LoanApplication: React.FC = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loanStatus, setLoanStatus] = useState<"idle" | "submitting" | "approved" | "rejected">("idle");
   const [sliderValue, setSliderValue] = useState([50000]);
@@ -81,6 +82,28 @@ const LoanApplication: React.FC = () => {
     return schedule;
   };
   
+  // Save loan application to localStorage
+  const saveLoanApplication = (loanData: any, status: string, rejectionReason?: string) => {
+    const existingLoans = JSON.parse(localStorage.getItem('loan-applications') || '[]');
+    const newLoan = {
+      id: `LN${String(Date.now()).slice(-6)}`,
+      amount: loanData.amount,
+      purpose: loanData.purpose,
+      status: status,
+      appliedDate: new Date().toISOString().split('T')[0],
+      approvedDate: status === 'approved' ? new Date().toISOString().split('T')[0] : undefined,
+      dueDate: status === 'approved' ? new Date(Date.now() + (loanData.duration * 30 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0] : undefined,
+      interestRate: interestRate * 100,
+      monthlyPayment: status === 'approved' ? calculateMonthlyPayment(loanData.amount, loanData.duration, interestRate) : undefined,
+      remainingBalance: status === 'approved' ? loanData.amount : undefined,
+      duration: loanData.duration,
+      rejectionReason: rejectionReason
+    };
+    
+    existingLoans.unshift(newLoan);
+    localStorage.setItem('loan-applications', JSON.stringify(existingLoans));
+  };
+  
   // Handle loan application submission
   const handleApplyForLoan = async (values: any) => {
     setIsSubmitting(true);
@@ -92,24 +115,45 @@ const LoanApplication: React.FC = () => {
     
     // Mock API call
     setTimeout(() => {
+      let status = 'approved';
+      let rejectionReason = '';
+      
       // For demo purposes, approve loans under 300k and reject higher amounts
-      if (values.amount <= 300000) {
+      if (values.amount > 300000) {
+        status = 'rejected';
+        rejectionReason = 'Loan amount exceeds your current eligibility limit of ₦300,000. Please apply for a lower amount or improve your credit score.';
+        setLoanStatus("rejected");
+        toast({
+          title: "Loan application rejected",
+          description: rejectionReason,
+          variant: "destructive",
+        });
+      } else if (values.duration > 12) {
+        status = 'rejected';
+        rejectionReason = 'Loan duration exceeds the maximum allowed period of 12 months for your credit profile.';
+        setLoanStatus("rejected");
+        toast({
+          title: "Loan application rejected", 
+          description: rejectionReason,
+          variant: "destructive",
+        });
+      } else {
         setLoanStatus("approved");
         toast({
           title: "Loan application successful!",
           description: `Your loan of ₦${values.amount.toLocaleString()} has been pre-approved.`,
         });
-      } else {
-        setLoanStatus("rejected");
-        toast({
-          title: "Loan application requires review",
-          description: "Our team will review your application and get back to you within 24 hours.",
-          variant: "destructive",
-        });
       }
+      
+      // Save the loan application
+      saveLoanApplication(values, status, rejectionReason);
       
       setIsSubmitting(false);
     }, 3000);
+  };
+  
+  const handleViewLoanHistory = () => {
+    navigate('/loan-history');
   };
   
   return (
@@ -119,7 +163,7 @@ const LoanApplication: React.FC = () => {
         <Button 
           variant="outline" 
           className="mt-4 sm:mt-0" 
-          onClick={() => window.location.href = "/loan/history"}
+          onClick={handleViewLoanHistory}
         >
           View Loan History
         </Button>
@@ -381,11 +425,11 @@ const LoanApplication: React.FC = () => {
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle>Loan Application {loanStatus === "approved" ? "Pre-Approved" : "Needs Review"}</CardTitle>
+                      <CardTitle>Loan Application {loanStatus === "approved" ? "Pre-Approved" : "Rejected"}</CardTitle>
                       <CardDescription>
                         {loanStatus === "approved" 
                           ? "Your loan has been pre-approved. Review the details below." 
-                          : "Your application requires additional review by our team."}
+                          : "Your application has been rejected. See the reason below."}
                       </CardDescription>
                     </div>
                     <div className={`p-2 rounded-full ${loanStatus === "approved" ? "bg-ww-green-100" : "bg-red-100"}`}>
@@ -434,19 +478,24 @@ const LoanApplication: React.FC = () => {
                     </div>
                   ) : (
                     <div>
-                      <h3 className="font-medium mb-3">Why additional review is needed:</h3>
-                      <ul className="space-y-2 text-sm pl-5 list-disc">
-                        <li>The requested loan amount exceeds your current eligibility limit</li>
-                        <li>We need to verify additional information</li>
-                      </ul>
-                      
-                      <div className="bg-muted p-4 rounded-md mt-4">
-                        <p className="text-sm">Our team will contact you within 24 hours to discuss your application and options. You may also provide additional documents to support your application.</p>
+                      <h3 className="font-medium mb-3">Rejection Reason:</h3>
+                      <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-md mb-4">
+                        <p className="text-sm text-red-800 dark:text-red-200">
+                          Your loan application was rejected because the requested amount or duration exceeds your current eligibility limits.
+                        </p>
                       </div>
                       
+                      <h3 className="font-medium mb-3">What you can do:</h3>
+                      <ul className="space-y-2 text-sm pl-5 list-disc">
+                        <li>Apply for a smaller loan amount (maximum ₦300,000)</li>
+                        <li>Choose a shorter repayment period (maximum 12 months)</li>
+                        <li>Improve your credit score by making timely payments</li>
+                        <li>Contact our support team for personalized advice</li>
+                      </ul>
+                      
                       <div className="grid grid-cols-2 gap-4 mt-6">
-                        <Button variant="outline">
-                          Upload Documents
+                        <Button variant="outline" onClick={() => setLoanStatus("idle")}>
+                          Apply Again
                         </Button>
                         <Button>
                           Contact Support
