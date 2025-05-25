@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,368 +50,368 @@ const UserSettings = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-3xl font-bold tracking-tight">Account Settings</h2>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 dark:from-white dark:via-blue-100 dark:to-white bg-clip-text text-transparent">
+            Account Settings
+          </h1>
+          <p className="text-slate-600 dark:text-slate-400">Manage your profile, security, and preferences</p>
+        </div>
 
-      <Tabs defaultValue="profile">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="profile" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+            <TabsTrigger value="profile" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white">Profile</TabsTrigger>
+            <TabsTrigger value="security" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white">Security</TabsTrigger>
+            <TabsTrigger value="notifications" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white">Notifications</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="profile" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Formik
-                initialValues={{
-                  firstName: "Ade",
-                  lastName: "Dayo",
-                  email: "ade.dayo@example.com",
-                  phone: "08012345678",
-                }}
-                onSubmit={handleProfileSubmit}
-              >
-                {({ errors, touched }) => (
-                  <Form className="space-y-4">
-                    <div className="flex mb-6 items-center">
-                      <div className="h-20 w-20 rounded-full bg-ww-purple-200 flex items-center justify-center text-ww-purple-800 text-xl font-medium">
-                        AD
+          <TabsContent value="profile" className="space-y-6">
+            <Card className="backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-white/20 dark:border-slate-700/50 shadow-xl">
+              <CardHeader className="border-b border-slate-200/50 dark:border-slate-700/50">
+                <CardTitle className="text-xl font-semibold text-slate-900 dark:text-white">Personal Information</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <Formik
+                  initialValues={{
+                    firstName: "Ade",
+                    lastName: "Dayo",
+                    email: "ade.dayo@example.com",
+                    phone: "08012345678",
+                  }}
+                  onSubmit={handleProfileSubmit}
+                >
+                  {({ errors, touched }) => (
+                    <Form className="space-y-6">
+                      <div className="flex mb-8 items-center">
+                        <div className="h-24 w-24 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+                          AD
+                        </div>
+                        <div className="ml-6">
+                          <Button variant="outline" size="sm" className="mb-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+                            Upload Photo
+                          </Button>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            JPG or PNG. Max size of 2MB
+                          </p>
+                        </div>
                       </div>
-                      <div className="ml-4">
-                        <Button variant="outline" size="sm" className="mb-1">
-                          Upload Photo
-                        </Button>
-                        <p className="text-xs text-muted-foreground">
-                          JPG or PNG. Max size of 2MB
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <Label htmlFor="firstName" className="text-sm font-semibold text-slate-700 dark:text-slate-300">First Name</Label>
+                          <Field name="firstName">
+                            {({ field }: { field: any }) => (
+                              <InputWithIcon
+                                {...field}
+                                id="firstName"
+                                icon={<User size={18} />}
+                                className="mt-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-slate-200 dark:border-slate-700"
+                              />
+                            )}
+                          </Field>
+                        </div>
+                        <div>
+                          <Label htmlFor="lastName" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Last Name</Label>
+                          <Field name="lastName">
+                            {({ field }: { field: any }) => (
+                              <InputWithIcon
+                                {...field}
+                                id="lastName"
+                                icon={<User size={18} />}
+                                className="mt-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-slate-200 dark:border-slate-700"
+                              />
+                            )}
+                          </Field>
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="email" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Email Address</Label>
+                        <Field name="email">
+                          {({ field }: { field: any }) => (
+                            <InputWithIcon
+                              {...field}
+                              id="email"
+                              icon={<Mail size={18} />}
+                              disabled
+                              className="mt-2 bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                            />
+                          )}
+                        </Field>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                          Contact support to change your email address
                         </p>
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Field name="firstName">
+                        <Label htmlFor="phone" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Phone Number</Label>
+                        <Field name="phone">
                           {({ field }: { field: any }) => (
                             <InputWithIcon
                               {...field}
-                              id="firstName"
-                              icon={<User size={18} />}
+                              id="phone"
+                              icon={<Phone size={18} />}
+                              className="mt-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-slate-200 dark:border-slate-700"
                             />
                           )}
                         </Field>
                       </div>
-                      <div>
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Field name="lastName">
-                          {({ field }: { field: any }) => (
-                            <InputWithIcon
-                              {...field}
-                              id="lastName"
-                              icon={<User size={18} />}
-                            />
-                          )}
-                        </Field>
-                      </div>
-                    </div>
 
-                    <div>
-                      <Label htmlFor="email">Email Address</Label>
-                      <Field name="email">
-                        {({ field }: { field: any }) => (
-                          <InputWithIcon
-                            {...field}
-                            id="email"
-                            icon={<Mail size={18} />}
-                            disabled
-                          />
-                        )}
-                      </Field>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Contact support to change your email address
-                      </p>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <Field name="phone">
-                        {({ field }: { field: any }) => (
-                          <InputWithIcon
-                            {...field}
-                            id="phone"
-                            icon={<Phone size={18} />}
-                          />
-                        )}
-                      </Field>
-                    </div>
-
-                    <div className="pt-4">
-                      <Button
-                        type="submit"
-                        className="bg-ww-purple-500 hover:bg-ww-purple-600"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? "Saving..." : "Save Changes"}
-                      </Button>
-                    </div>
-                  </Form>
-                )}
-              </Formik>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="security" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Change Password</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Formik
-                initialValues={{
-                  currentPassword: "",
-                  newPassword: "",
-                  confirmPassword: "",
-                }}
-                onSubmit={handlePasswordSubmit}
-              >
-                {({ errors, touched }) => (
-                  <Form className="space-y-4">
-                    <div>
-                      <Label htmlFor="currentPassword">Current Password</Label>
-                      <div className="relative">
-                        <Field name="currentPassword">
-                          {({ field }: { field: any }) => (
-                            <InputWithIcon
-                              {...field}
-                              id="currentPassword"
-                              type={showPassword ? "text" : "password"}
-                              icon={<Lock size={18} />}
-                            />
-                          )}
-                        </Field>
+                      <div className="pt-6">
                         <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute top-0 right-0 h-full px-3"
-                          onClick={() => setShowPassword(!showPassword)}
+                          type="submit"
+                          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                          disabled={isLoading}
                         >
-                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          {isLoading ? "Saving..." : "Save Changes"}
                         </Button>
                       </div>
-                    </div>
+                    </Form>
+                  )}
+                </Formik>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-                    <div>
-                      <Label htmlFor="newPassword">New Password</Label>
-                      <div className="relative">
-                        <Field name="newPassword">
+          <TabsContent value="security" className="space-y-6">
+            <Card className="backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-white/20 dark:border-slate-700/50 shadow-xl">
+              <CardHeader className="border-b border-slate-200/50 dark:border-slate-700/50">
+                <CardTitle className="text-xl font-semibold text-slate-900 dark:text-white">Change Password</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <Formik
+                  initialValues={{
+                    currentPassword: "",
+                    newPassword: "",
+                    confirmPassword: "",
+                  }}
+                  onSubmit={handlePasswordSubmit}
+                >
+                  {({ errors, touched }) => (
+                    <Form className="space-y-6">
+                      <div>
+                        <Label htmlFor="currentPassword" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Current Password</Label>
+                        <div className="relative mt-2">
+                          <Field name="currentPassword">
+                            {({ field }: { field: any }) => (
+                              <InputWithIcon
+                                {...field}
+                                id="currentPassword"
+                                type={showPassword ? "text" : "password"}
+                                icon={<Lock size={18} />}
+                                className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 pr-12"
+                              />
+                            )}
+                          </Field>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute top-0 right-0 h-full px-3"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="newPassword" className="text-sm font-semibold text-slate-700 dark:text-slate-300">New Password</Label>
+                        <div className="relative mt-2">
+                          <Field name="newPassword">
+                            {({ field }: { field: any }) => (
+                              <InputWithIcon
+                                {...field}
+                                id="newPassword"
+                                type={showNewPassword ? "text" : "password"}
+                                icon={<Lock size={18} />}
+                                className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 pr-12"
+                              />
+                            )}
+                          </Field>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute top-0 right-0 h-full px-3"
+                            onClick={() => setShowNewPassword(!showNewPassword)}
+                          >
+                            {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </Button>
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                          Password must be at least 8 characters
+                        </p>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="confirmPassword" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Confirm New Password</Label>
+                        <Field name="confirmPassword">
                           {({ field }: { field: any }) => (
                             <InputWithIcon
                               {...field}
-                              id="newPassword"
+                              id="confirmPassword"
                               type={showNewPassword ? "text" : "password"}
                               icon={<Lock size={18} />}
+                              className="mt-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-slate-200 dark:border-slate-700"
                             />
                           )}
                         </Field>
+                      </div>
+
+                      <div className="pt-6">
                         <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute top-0 right-0 h-full px-3"
-                          onClick={() => setShowNewPassword(!showNewPassword)}
+                          type="submit"
+                          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                          disabled={isLoading}
                         >
-                          {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          {isLoading ? "Updating..." : "Update Password"}
                         </Button>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Password must be at least 8 characters
+                    </Form>
+                  )}
+                </Formik>
+              </CardContent>
+            </Card>
+
+            <Card className="backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-white/20 dark:border-slate-700/50 shadow-xl">
+              <CardHeader className="border-b border-slate-200/50 dark:border-slate-700/50">
+                <CardTitle className="text-xl font-semibold text-slate-900 dark:text-white">Two-Factor Authentication</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600">
+                    <div>
+                      <h4 className="font-semibold text-slate-900 dark:text-white">SMS Authentication</h4>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                        Receive OTP via SMS for secure login
                       </p>
                     </div>
+                    <Switch defaultChecked />
+                  </div>
 
+                  <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600">
                     <div>
-                      <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                      <Field name="confirmPassword">
-                        {({ field }: { field: any }) => (
-                          <InputWithIcon
-                            {...field}
-                            id="confirmPassword"
-                            type={showNewPassword ? "text" : "password"}
-                            icon={<Lock size={18} />}
-                          />
-                        )}
-                      </Field>
+                      <h4 className="font-semibold text-slate-900 dark:text-white">Login Notifications</h4>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                        Get notified when someone logs into your account
+                      </p>
                     </div>
+                    <Switch defaultChecked />
+                  </div>
 
-                    <div className="pt-4">
-                      <Button
-                        type="submit"
-                        className="bg-ww-purple-500 hover:bg-ww-purple-600"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? "Updating..." : "Update Password"}
-                      </Button>
+                  <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600">
+                    <div>
+                      <h4 className="font-semibold text-slate-900 dark:text-white">Transaction PIN</h4>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                        Require PIN for all transactions
+                      </p>
                     </div>
-                  </Form>
-                )}
-              </Formik>
-            </CardContent>
-          </Card>
+                    <Switch defaultChecked />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Two-Factor Authentication</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
+          <TabsContent value="notifications" className="space-y-6">
+            <Card className="backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-white/20 dark:border-slate-700/50 shadow-xl">
+              <CardHeader className="border-b border-slate-200/50 dark:border-slate-700/50">
+                <CardTitle className="text-xl font-semibold text-slate-900 dark:text-white">Notification Settings</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-8">
                   <div>
-                    <h4 className="font-medium">SMS Authentication</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Receive OTP via SMS for secure login
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Push Notifications</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600">
+                        <div>
+                          <h4 className="font-semibold text-slate-900 dark:text-white">Transaction Alerts</h4>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            Receive alerts for all transactions
+                          </p>
+                        </div>
+                        <Switch defaultChecked />
+                      </div>
 
-                <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600">
+                        <div>
+                          <h4 className="font-semibold text-slate-900 dark:text-white">Loan Reminders</h4>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            Upcoming loan payment reminders
+                          </p>
+                        </div>
+                        <Switch defaultChecked />
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600">
+                        <div>
+                          <h4 className="font-semibold text-slate-900 dark:text-white">Savings Goals</h4>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            Updates about your savings goals progress
+                          </p>
+                        </div>
+                        <Switch defaultChecked />
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
-                    <h4 className="font-medium">Login Notifications</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Get notified when someone logs into your account
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Email Notifications</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600">
+                        <div>
+                          <h4 className="font-semibold text-slate-900 dark:text-white">Monthly Statements</h4>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            Receive monthly account statements via email
+                          </p>
+                        </div>
+                        <Switch defaultChecked />
+                      </div>
 
-                <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600">
+                        <div>
+                          <h4 className="font-semibold text-slate-900 dark:text-white">Promotional News</h4>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            Updates about new features and offers
+                          </p>
+                        </div>
+                        <Switch />
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
-                    <h4 className="font-medium">Transaction PIN</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Require PIN for all transactions
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="notifications" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Notification Settings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Push Notifications</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium">Transaction Alerts</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Receive alerts for all transactions
-                        </p>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">SMS Notifications</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600">
+                        <div>
+                          <h4 className="font-semibold text-slate-900 dark:text-white">Payment Confirmations</h4>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            SMS confirmation for payments and transfers
+                          </p>
+                        </div>
+                        <Switch defaultChecked />
                       </div>
-                      <Switch defaultChecked />
-                    </div>
 
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium">Loan Reminders</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Upcoming loan payment reminders
-                        </p>
+                      <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600">
+                        <div>
+                          <h4 className="font-semibold text-slate-900 dark:text-white">Security Alerts</h4>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            Critical security notifications via SMS
+                          </p>
+                        </div>
+                        <Switch defaultChecked />
                       </div>
-                      <Switch defaultChecked />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium">Savings Goals</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Updates about your savings goals progress
-                        </p>
-                      </div>
-                      <Switch defaultChecked />
                     </div>
                   </div>
                 </div>
-
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Email Notifications</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium">Monthly Statements</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Receive monthly account statements via email
-                        </p>
-                      </div>
-                      <Switch defaultChecked />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium">Promotional News</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Updates about new features and offers
-                        </p>
-                      </div>
-                      <Switch />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-medium mb-3">SMS Notifications</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium">Transaction Alerts</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Receive SMS for transactions over ₦10,000
-                        </p>
-                      </div>
-                      <Switch defaultChecked />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium">Security Alerts</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Important security notifications
-                        </p>
-                      </div>
-                      <Switch defaultChecked />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-6">
-                <Button
-                  className="bg-ww-purple-500 hover:bg-ww-purple-600"
-                  onClick={() => {
-                    toast({
-                      title: "Notification settings saved",
-                      description: "Your notification preferences have been updated.",
-                    });
-                  }}
-                >
-                  Save Preferences
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };

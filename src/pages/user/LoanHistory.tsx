@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,13 +32,11 @@ const LoanHistory = () => {
   const [loanHistory, setLoanHistory] = useState<LoanRecord[]>([]);
   const navigate = useNavigate();
 
-  // Load loan applications from localStorage
   useEffect(() => {
     const storedLoans = localStorage.getItem('loan-applications');
     if (storedLoans) {
       setLoanHistory(JSON.parse(storedLoans));
     } else {
-      // Default mock data if no stored loans
       const defaultLoans: LoanRecord[] = [
         {
           id: "LN001",
@@ -116,164 +113,180 @@ const LoanHistory = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Loan History</h2>
-          <p className="text-muted-foreground">
-            Track all your loan applications and active loans
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 dark:from-white dark:via-indigo-100 dark:to-white bg-clip-text text-transparent">
+              Loan History
+            </h1>
+            <p className="text-slate-600 dark:text-slate-400">Track all your loan applications and active loans</p>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0">
+            <Select value={filter} onValueChange={setFilter}>
+              <SelectTrigger className="w-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm">
+                <SelectItem value="all">All Loans</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="approved">Approved</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button 
+              onClick={() => navigate('/loan')}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Apply for New Loan
+            </Button>
+          </div>
         </div>
-        
-        <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-0">
-          <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Loans</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="approved">Approved</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button onClick={() => navigate('/loan')}>
-            Apply for New Loan
-          </Button>
-        </div>
-      </div>
 
-      <div className="grid gap-4">
-        {filteredLoans.length > 0 ? (
-          filteredLoans.map((loan) => (
-            <Card key={loan.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center mb-2">
-                      <CreditCard className="h-5 w-5 mr-2 text-ww-purple-500" />
-                      <h3 className="text-lg font-semibold">{formatPurpose(loan.purpose)}</h3>
-                      <Badge 
-                        variant="secondary" 
-                        className={`ml-2 ${getStatusColor(loan.status)}`}
-                      >
-                        <span className="flex items-center">
-                          {getStatusIcon(loan.status)}
-                          <span className="ml-1 capitalize">{loan.status}</span>
-                        </span>
-                      </Badge>
+        <div className="grid gap-6">
+          {filteredLoans.length > 0 ? (
+            filteredLoans.map((loan) => (
+              <Card key={loan.id} className="group backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-white/20 dark:border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+                <CardContent className="p-6">
+                  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center mb-4">
+                        <div className="p-2 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-lg mr-3">
+                          <CreditCard className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                        </div>
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white">{formatPurpose(loan.purpose)}</h3>
+                        <Badge 
+                          variant="secondary" 
+                          className={`ml-3 ${getStatusColor(loan.status)} border-0 shadow-sm`}
+                        >
+                          <span className="flex items-center">
+                            {getStatusIcon(loan.status)}
+                            <span className="ml-1 capitalize font-medium">{loan.status}</span>
+                          </span>
+                        </Badge>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Loan Amount</p>
+                          <p className="text-lg font-bold text-slate-900 dark:text-white">{formatCurrency(loan.amount)}</p>
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Interest Rate</p>
+                          <p className="text-lg font-bold text-slate-900 dark:text-white">{loan.interestRate}% monthly</p>
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Applied Date</p>
+                          <p className="text-lg font-bold text-slate-900 dark:text-white">{new Date(loan.appliedDate).toLocaleDateString()}</p>
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Loan ID</p>
+                          <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">{loan.id}</p>
+                        </div>
+                      </div>
+
+                      {/* Status-specific content remains the same */}
+                      {loan.status === "rejected" && loan.rejectionReason && (
+                        <div className="mt-6 p-4 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                          <div className="flex items-start">
+                            <Info className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 mr-3 flex-shrink-0" />
+                            <div>
+                              <p className="text-sm font-semibold text-red-800 dark:text-red-200">Rejection Reason:</p>
+                              <p className="text-sm text-red-700 dark:text-red-300 mt-1">{loan.rejectionReason}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {loan.status === "active" && (
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 mt-6 pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Monthly Payment</p>
+                            <p className="text-lg font-bold text-blue-600 dark:text-blue-400">{formatCurrency(loan.monthlyPayment!)}</p>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Remaining Balance</p>
+                            <p className="text-lg font-bold text-orange-600 dark:text-orange-400">{formatCurrency(loan.remainingBalance!)}</p>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Due Date</p>
+                            <p className="text-lg font-bold text-slate-900 dark:text-white">{new Date(loan.dueDate!).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {loan.status === "approved" && (
+                        <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                          <div className="flex items-start">
+                            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 mr-3 flex-shrink-0" />
+                            <div>
+                              <p className="text-sm font-semibold text-green-800 dark:text-green-200">Loan Approved!</p>
+                              <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                                Your loan has been approved. Funds will be disbursed shortly.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {loan.status === "completed" && (
+                        <div className="mt-6 p-4 bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-800/50 dark:to-gray-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                          <div className="flex items-start">
+                            <CheckCircle className="h-5 w-5 text-slate-600 dark:text-slate-400 mt-0.5 mr-3 flex-shrink-0" />
+                            <div>
+                              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">Loan Completed</p>
+                              <p className="text-sm text-slate-700 dark:text-slate-300 mt-1">
+                                This loan has been fully repaid. Thank you for your business!
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Loan Amount</p>
-                        <p className="font-semibold">{formatCurrency(loan.amount)}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm text-muted-foreground">Interest Rate</p>
-                        <p className="font-semibold">{loan.interestRate}% monthly</p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm text-muted-foreground">Applied Date</p>
-                        <p className="font-semibold">{new Date(loan.appliedDate).toLocaleDateString()}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm text-muted-foreground">Loan ID</p>
-                        <p className="font-semibold text-ww-purple-600">{loan.id}</p>
-                      </div>
+                    <div className="mt-6 lg:mt-0 lg:ml-6">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:bg-white dark:hover:bg-slate-700 transition-all duration-200"
+                      >
+                        View Details
+                      </Button>
                     </div>
-
-                    {/* Show rejection reason for rejected loans */}
-                    {loan.status === "rejected" && loan.rejectionReason && (
-                      <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-md border border-red-200 dark:border-red-800">
-                        <div className="flex items-start">
-                          <Info className="h-4 w-4 text-red-600 dark:text-red-400 mt-0.5 mr-2 flex-shrink-0" />
-                          <div>
-                            <p className="text-sm font-medium text-red-800 dark:text-red-200">Rejection Reason:</p>
-                            <p className="text-sm text-red-700 dark:text-red-300 mt-1">{loan.rejectionReason}</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {loan.status === "active" && (
-                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-4 pt-4 border-t">
-                        <div>
-                          <p className="text-sm text-muted-foreground">Monthly Payment</p>
-                          <p className="font-semibold text-blue-600">{formatCurrency(loan.monthlyPayment!)}</p>
-                        </div>
-                        
-                        <div>
-                          <p className="text-sm text-muted-foreground">Remaining Balance</p>
-                          <p className="font-semibold text-orange-600">{formatCurrency(loan.remainingBalance!)}</p>
-                        </div>
-                        
-                        <div>
-                          <p className="text-sm text-muted-foreground">Due Date</p>
-                          <p className="font-semibold">{new Date(loan.dueDate!).toLocaleDateString()}</p>
-                        </div>
-                      </div>
-                    )}
-
-                    {loan.status === "approved" && (
-                      <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800">
-                        <div className="flex items-start">
-                          <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5 mr-2 flex-shrink-0" />
-                          <div>
-                            <p className="text-sm font-medium text-green-800 dark:text-green-200">Loan Approved!</p>
-                            <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                              Your loan has been approved. Funds will be disbursed shortly.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {loan.status === "completed" && (
-                      <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-900/20 rounded-md border border-gray-200 dark:border-gray-800">
-                        <div className="flex items-start">
-                          <CheckCircle className="h-4 w-4 text-gray-600 dark:text-gray-400 mt-0.5 mr-2 flex-shrink-0" />
-                          <div>
-                            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Loan Completed</p>
-                            <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
-                              This loan has been fully repaid. Thank you for your business!
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
-                  
-                  <div className="mt-4 lg:mt-0 lg:ml-6">
-                    <Button variant="outline" size="sm">
-                      View Details
-                    </Button>
-                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <Card className="backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-white/20 dark:border-slate-700/50 shadow-xl">
+              <CardContent className="py-16 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <CreditCard className="h-8 w-8 text-slate-400" />
                 </div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No loans found</h3>
+                <p className="text-slate-600 dark:text-slate-400 mb-6">
+                  {filter !== "all" 
+                    ? `You don't have any ${filter} loans`
+                    : "You haven't applied for any loans yet"}
+                </p>
+                <Button 
+                  onClick={() => navigate('/loan')}
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Apply for a Loan
+                </Button>
               </CardContent>
             </Card>
-          ))
-        ) : (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <CreditCard className="mx-auto h-12 w-12 text-muted-foreground opacity-50" />
-              <p className="mt-4 text-lg font-medium">No loans found</p>
-              <p className="text-muted-foreground">
-                {filter !== "all" 
-                  ? `You don't have any ${filter} loans`
-                  : "You haven't applied for any loans yet"}
-              </p>
-              <Button className="mt-4" onClick={() => navigate('/loan')}>
-                Apply for a Loan
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
