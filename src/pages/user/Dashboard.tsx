@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import WalletSummaryCard from "@/components/organisms/WalletSummaryCard";
 import QuickActionsPanel from "@/components/organisms/QuickActionsPanel";
 import BillPaymentPanel from "@/components/organisms/BillPaymentPanel";
-import { ArrowUpRight, BarChart3, AlertTriangle } from "lucide-react";
+import { ArrowUpRight, BarChart3, AlertTriangle, TrendingUp, Wallet, CreditCard } from "lucide-react";
 import AlertBanner from "@/components/molecules/AlertBanner";
 import { 
   getWalletBalance, 
@@ -37,33 +38,26 @@ const Dashboard = () => {
     type: "credit" | "debit";
   } | undefined>(undefined);
   
-  // Other state
   const [loanDueDate] = useState("May 20, 2023");
   const [loanAmount] = useState("25,000");
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   
-  // Transaction details modal state
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   
-  // Bill payment modal states
   const [isAirtimeModalOpen, setIsAirtimeModalOpen] = useState(false);
   const [isDataModalOpen, setIsDataModalOpen] = useState(false);
   const [isTvModalOpen, setIsTvModalOpen] = useState(false);
   const [isElectricityModalOpen, setIsElectricityModalOpen] = useState(false);
   const [isNetflixModalOpen, setIsNetflixModalOpen] = useState(false);
   
-  // Initialize data
   useEffect(() => {
-    // Get initial balance
     const currentBalance = getWalletBalance();
     setBalance(currentBalance);
     
-    // Get recent transactions
     const recentTransactions = getRecentTransactions();
     setTransactions(recentTransactions);
     
-    // Set last transaction if available
     if (recentTransactions.length > 0) {
       const latest = recentTransactions[0];
       setLastTransaction({
@@ -74,18 +68,11 @@ const Dashboard = () => {
     }
   }, []);
   
-  // Handle deposit
   const handleDeposit = (amount: number) => {
     try {
       const transaction = addDeposit(amount);
-      
-      // Update balance
       setBalance(getWalletBalance());
-      
-      // Update transactions list
       setTransactions([transaction, ...transactions].slice(0, 3));
-      
-      // Update last transaction
       setLastTransaction({
         amount: transaction.amount,
         date: transaction.date,
@@ -96,18 +83,11 @@ const Dashboard = () => {
     }
   };
   
-  // Handle withdrawal
   const handleWithdraw = (amount: number) => {
     try {
       const transaction = addWithdrawal(amount);
-      
-      // Update balance
       setBalance(getWalletBalance());
-      
-      // Update transactions list
       setTransactions([transaction, ...transactions].slice(0, 3));
-      
-      // Update last transaction
       setLastTransaction({
         amount: transaction.amount,
         date: transaction.date,
@@ -118,18 +98,11 @@ const Dashboard = () => {
     }
   };
   
-  // Handle transfer
   const handleTransfer = (amount: number, recipient: string) => {
     try {
       const transaction = addTransfer(amount, recipient);
-      
-      // Update balance
       setBalance(getWalletBalance());
-      
-      // Update transactions list
       setTransactions([transaction, ...transactions].slice(0, 3));
-      
-      // Update last transaction
       setLastTransaction({
         amount: transaction.amount,
         date: transaction.date,
@@ -140,18 +113,11 @@ const Dashboard = () => {
     }
   };
 
-  // Handle bill payment
   const handleBillPayment = (amount: number, description: string) => {
     try {
       const transaction = addBillPayment(amount, description);
-      
-      // Update balance
       setBalance(getWalletBalance());
-      
-      // Update transactions list
       setTransactions([transaction, ...transactions].slice(0, 3));
-      
-      // Update last transaction
       setLastTransaction({
         amount: transaction.amount,
         date: transaction.date,
@@ -162,32 +128,26 @@ const Dashboard = () => {
     }
   };
 
-  // Handle airtime purchase
   const handleAirtimePurchase = (amount: number, phoneNumber: string, network: string) => {
     handleBillPayment(amount, `${network.toUpperCase()} Airtime for ${phoneNumber}`);
   };
 
-  // Handle data purchase
   const handleDataPurchase = (amount: number, phoneNumber: string, network: string, plan: string) => {
     handleBillPayment(amount, `${network.toUpperCase()} ${plan} for ${phoneNumber}`);
   };
 
-  // Handle TV subscription
   const handleTvSubscription = (amount: number, smartCardNumber: string, provider: string, plan: string) => {
     handleBillPayment(amount, `${provider.toUpperCase()} ${plan} for ${smartCardNumber}`);
   };
 
-  // Handle Netflix subscription
   const handleNetflixSubscription = (amount: number, email: string, plan: string) => {
     handleBillPayment(amount, `Netflix ${plan} Subscription for ${email}`);
   };
 
-  // Handle Electricity bill payment
   const handleElectricityPayment = (amount: number, meterNumber: string, provider: string) => {
     handleBillPayment(amount, `${provider.toUpperCase()} Electricity for Meter ${meterNumber}`);
   };
   
-  // Handle bill selection
   const handleBillSelect = (billType: string) => {
     switch (billType) {
       case "airtime":
@@ -210,172 +170,231 @@ const Dashboard = () => {
     }
   };
 
-  // Handle opening transaction details
   const handleOpenTransactionDetails = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
     setIsTransactionModalOpen(true);
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-3xl font-bold tracking-tight">Welcome, Ade!</h2>
-      <p className="text-muted-foreground">
-        Here's an overview of your financial activities and options.
-      </p>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <WalletSummaryCard 
-          balance={balance} 
-          lastTransaction={lastTransaction}
-          onAddFunds={() => setIsDepositModalOpen(true)}
-          accountNumber="234 567 8910"
-        />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header Section */}
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+            Welcome back, Ade!
+          </h1>
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            Here's an overview of your financial activities and options.
+          </p>
+        </div>
         
-        <Card className="md:col-span-2">
-          <CardHeader className="pb-3">
-            <CardTitle>Upcoming Loan Payment</CardTitle>
-            <CardDescription>
-              Please ensure you have sufficient funds before the due date
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Due on {loanDueDate}</p>
-                <p className="text-2xl font-bold">NGN {loanAmount}</p>
-              </div>
-              <Button onClick={() => navigate("/loan")}>
-                View Loan Details
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <QuickActionsPanel 
-        onDeposit={handleDeposit}
-        onWithdraw={handleWithdraw}
-        onTransfer={handleTransfer}
-        balance={parseInt(balance.replace(/,/g, ""), 10)}
-      />
-      
-      <BillPaymentPanel onSelectBillType={handleBillSelect} />
-      
-      <AlertBanner
-        type="warning"
-        message="Complete your KYC verification to increase your transaction limits."
-        onClose={() => {}}
-      />
-      
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex justify-between items-center">
-            <CardTitle>Recent Transactions</CardTitle>
-            <Button variant="outline" size="sm" onClick={() => navigate("/transactions")}>
-              View All
-              <ArrowUpRight className="ml-1 h-4 w-4" />
-            </Button>
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Wallet Summary */}
+          <div className="lg:col-span-4">
+            <WalletSummaryCard 
+              balance={balance} 
+              lastTransaction={lastTransaction}
+              onAddFunds={() => setIsDepositModalOpen(true)}
+              accountNumber="234 567 8910"
+            />
           </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="divide-y">
-            {transactions.map((transaction) => (
-              <div 
-                key={transaction.id} 
-                className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors"
-                onClick={() => handleOpenTransactionDetails(transaction)}
-              >
-                <div className="flex items-center">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
-                    transaction.type === "credit" ? "bg-ww-green-100 text-ww-green-500" : "bg-ww-purple-100 text-ww-purple-500"
-                  }`}>
-                    {transaction.type === "credit" ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="18 15 12 9 6 15"></polyline>
-                      </svg>
-                    ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
-                    )}
+          
+          {/* Loan Payment Card */}
+          <div className="lg:col-span-8">
+            <Card className="h-full bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 border-orange-200 dark:border-orange-800 shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardHeader className="pb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+                    <CreditCard className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                   </div>
                   <div>
-                    <p className="font-medium">{transaction.description}</p>
-                    <p className="text-sm text-muted-foreground">{transaction.date}</p>
+                    <CardTitle className="text-xl text-slate-900 dark:text-white">Upcoming Loan Payment</CardTitle>
+                    <CardDescription className="text-slate-600 dark:text-slate-400">
+                      Please ensure you have sufficient funds before the due date
+                    </CardDescription>
                   </div>
                 </div>
-                <p className={`font-medium ${transaction.type === "credit" ? "text-ww-green-600" : ""}`}>
-                  {transaction.type === "credit" ? "+" : "-"} NGN {transaction.amount}
-                </p>
-              </div>
-            ))}
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Due on {loanDueDate}</p>
+                    <p className="text-3xl font-bold text-slate-900 dark:text-white">NGN {loanAmount}</p>
+                  </div>
+                  <Button 
+                    onClick={() => navigate("/loan")}
+                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    View Loan Details
+                    <ArrowUpRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <BarChart3 className="mr-2 h-5 w-5" />
-              Savings Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between text-sm mb-1">
-                  <span>House Fund</span>
-                  <span className="font-medium">60%</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div className="bg-ww-purple-500 h-2 rounded-full" style={{ width: "60%" }}></div>
-                </div>
-              </div>
-              
-              <div>
-                <div className="flex items-center justify-between text-sm mb-1">
-                  <span>Emergency Fund</span>
-                  <span className="font-medium">25%</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div className="bg-ww-green-500 h-2 rounded-full" style={{ width: "25%" }}></div>
-                </div>
-              </div>
-              
-              <Button variant="outline" size="sm" className="mt-2" onClick={() => navigate("/savings")}>
-                Manage Savings Plans
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        </div>
         
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <AlertTriangle className="mr-2 h-5 w-5" />
-              Notifications
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="border-l-4 border-ww-purple-500 pl-4 py-1">
-                <p className="font-medium">Loan Reminder</p>
-                <p className="text-sm text-muted-foreground">Your loan payment is due in 5 days</p>
-              </div>
-              
-              <div className="border-l-4 border-ww-green-500 pl-4 py-1">
-                <p className="font-medium">Savings Goal Milestone</p>
-                <p className="text-sm text-muted-foreground">You've reached 60% of your House Fund target!</p>
-              </div>
-              
-              <div className="border-l-4 border-gray-300 pl-4 py-1">
-                <p className="font-medium">New Feature Available</p>
-                <p className="text-sm text-muted-foreground">Try our new bill payment service</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Quick Actions */}
+        <QuickActionsPanel 
+          onDeposit={handleDeposit}
+          onWithdraw={handleWithdraw}
+          onTransfer={handleTransfer}
+          balance={parseInt(balance.replace(/,/g, ""), 10)}
+        />
+        
+        {/* Bill Payment */}
+        <BillPaymentPanel onSelectBillType={handleBillSelect} />
+        
+        {/* Alert Banner */}
+        <AlertBanner
+          type="warning"
+          message="Complete your KYC verification to increase your transaction limits."
+          onClose={() => {}}
+        />
+        
+        {/* Bottom Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Recent Transactions */}
+          <div className="xl:col-span-2">
+            <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-white/20 dark:border-slate-700/50 shadow-xl">
+              <CardHeader className="pb-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                      <Wallet className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <CardTitle className="text-xl text-slate-900 dark:text-white">Recent Transactions</CardTitle>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => navigate("/transactions")}
+                    className="bg-white/50 dark:bg-slate-700/50 hover:bg-white dark:hover:bg-slate-700 border-slate-200 dark:border-slate-600"
+                  >
+                    View All
+                    <ArrowUpRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="divide-y divide-slate-100 dark:divide-slate-700">
+                  {transactions.map((transaction) => (
+                    <div 
+                      key={transaction.id} 
+                      className="flex items-center justify-between p-6 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-all duration-200 group"
+                      onClick={() => handleOpenTransactionDetails(transaction)}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                          transaction.type === "credit" 
+                            ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400" 
+                            : "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
+                        }`}>
+                          {transaction.type === "credit" ? (
+                            <TrendingUp className="h-5 w-5" />
+                          ) : (
+                            <ArrowUpRight className="h-5 w-5 rotate-180" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                            {transaction.description}
+                          </p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">{transaction.date}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`font-bold text-lg ${
+                          transaction.type === "credit" 
+                            ? "text-emerald-600 dark:text-emerald-400" 
+                            : "text-red-600 dark:text-red-400"
+                        }`}>
+                          {transaction.type === "credit" ? "+" : "-"} NGN {transaction.amount}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Savings & Notifications */}
+          <div className="space-y-6">
+            {/* Savings Progress */}
+            <Card className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 border-emerald-200 dark:border-emerald-800 shadow-lg">
+              <CardHeader className="pb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                    <BarChart3 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <CardTitle className="text-lg text-slate-900 dark:text-white">Savings Progress</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between text-sm mb-2">
+                      <span className="font-medium text-slate-700 dark:text-slate-300">House Fund</span>
+                      <span className="font-bold text-emerald-600 dark:text-emerald-400">60%</span>
+                    </div>
+                    <div className="w-full bg-emerald-100 dark:bg-emerald-900/30 rounded-full h-3">
+                      <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-3 rounded-full transition-all duration-500" style={{ width: "60%" }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex items-center justify-between text-sm mb-2">
+                      <span className="font-medium text-slate-700 dark:text-slate-300">Emergency Fund</span>
+                      <span className="font-bold text-blue-600 dark:text-blue-400">25%</span>
+                    </div>
+                    <div className="w-full bg-blue-100 dark:bg-blue-900/30 rounded-full h-3">
+                      <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-3 rounded-full transition-all duration-500" style={{ width: "25%" }}></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full bg-white/50 dark:bg-slate-700/50 hover:bg-white dark:hover:bg-slate-700 border-emerald-200 dark:border-emerald-700"
+                  onClick={() => navigate("/savings")}
+                >
+                  Manage Savings Plans
+                </Button>
+              </CardContent>
+            </Card>
+            
+            {/* Notifications */}
+            <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border-purple-200 dark:border-purple-800 shadow-lg">
+              <CardHeader className="pb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                    <AlertTriangle className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <CardTitle className="text-lg text-slate-900 dark:text-white">Notifications</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="border-l-4 border-purple-500 bg-white/50 dark:bg-slate-800/50 pl-4 py-3 rounded-r-lg">
+                  <p className="font-semibold text-slate-900 dark:text-white">Loan Reminder</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Your loan payment is due in 5 days</p>
+                </div>
+                
+                <div className="border-l-4 border-emerald-500 bg-white/50 dark:bg-slate-800/50 pl-4 py-3 rounded-r-lg">
+                  <p className="font-semibold text-slate-900 dark:text-white">Savings Goal Milestone</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">You've reached 60% of your House Fund target!</p>
+                </div>
+                
+                <div className="border-l-4 border-blue-500 bg-white/50 dark:bg-slate-800/50 pl-4 py-3 rounded-r-lg">
+                  <p className="font-semibold text-slate-900 dark:text-white">New Feature Available</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Try our new bill payment service</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
 
       {/* Bill Payment Modals */}
@@ -414,7 +433,6 @@ const Dashboard = () => {
         maxAmount={parseInt(balance.replace(/,/g, ""), 10)}
       />
 
-      {/* Transaction Details Modal */}
       <TransactionDetailsModal
         isOpen={isTransactionModalOpen}
         onClose={() => setIsTransactionModalOpen(false)}
