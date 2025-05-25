@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,7 @@ import LoanApplication from "./pages/user/LoanApplication";
 import SavingsSetup from "./pages/user/SavingsSetup";
 import UserSettings from "./pages/user/UserSettings";
 import Notifications from "./pages/user/Notifications";
+import LoanHistory from "./pages/user/LoanHistory";
 
 // Agent Pages
 import AgentDashboard from "./pages/agent/AgentDashboard";
@@ -109,6 +109,7 @@ const AppRoutes = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/loan" element={<LoanApplication />} />
+          <Route path="/loan-history" element={<LoanHistory />} />
           <Route path="/savings" element={<SavingsSetup />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<UserSettings />} />

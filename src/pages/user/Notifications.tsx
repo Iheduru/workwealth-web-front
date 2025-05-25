@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,10 +10,13 @@ import {
 } from "@/services/notificationService";
 import { Bell, CheckCheck, Trash2, CreditCard, Coins, Calendar, Settings } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import NotificationDetailsModal from "@/components/modals/NotificationDetailsModal";
 
 const NotificationsPage = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [filter, setFilter] = useState<"all" | "unread" | "read">("all");
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   // Load notifications on component mount
   useEffect(() => {
@@ -34,6 +36,14 @@ const NotificationsPage = () => {
   const handleClearAll = () => {
     clearAllNotifications();
     setNotifications([]);
+  };
+
+  const handleNotificationClick = (notification: Notification) => {
+    setSelectedNotification(notification);
+    setIsDetailsModalOpen(true);
+    if (!notification.read) {
+      handleMarkAsRead(notification.id);
+    }
   };
 
   const filteredNotifications = notifications.filter(notification => {
@@ -130,7 +140,8 @@ const NotificationsPage = () => {
               {filteredNotifications.map((notification) => (
                 <div 
                   key={notification.id} 
-                  className={`flex p-4 ${!notification.read ? "bg-muted/50" : ""}`}
+                  className={`flex p-4 cursor-pointer hover:bg-muted/30 transition-colors ${!notification.read ? "bg-muted/50" : ""}`}
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
                     notification.type === "loan" 
@@ -150,7 +161,7 @@ const NotificationsPage = () => {
                         <p className={`font-medium ${!notification.read ? "text-foreground" : "text-muted-foreground"}`}>
                           {notification.title}
                         </p>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                           {notification.message}
                         </p>
                       </div>
@@ -161,14 +172,7 @@ const NotificationsPage = () => {
                         </span>
                         
                         {!notification.read && (
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="text-xs px-2 h-7 mt-1"
-                            onClick={() => handleMarkAsRead(notification.id)}
-                          >
-                            Mark read
-                          </Button>
+                          <div className="w-2 h-2 bg-ww-purple-500 rounded-full mt-1"></div>
                         )}
                       </div>
                     </div>
@@ -189,6 +193,13 @@ const NotificationsPage = () => {
           )}
         </CardContent>
       </Card>
+
+      <NotificationDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        notification={selectedNotification}
+        onMarkAsRead={handleMarkAsRead}
+      />
     </div>
   );
 };
