@@ -79,9 +79,9 @@ const NotificationsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50 to-orange-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-6">
-      <div className="max-w-6xl mx-auto space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+<div className="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50 to-orange-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-4 sm:p-6">
+  <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
+    <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-amber-900 to-slate-900 dark:from-white dark:via-amber-100 dark:to-white bg-clip-text text-transparent">
               Notifications
@@ -91,15 +91,15 @@ const NotificationsPage = () => {
             </p>
           </div>
           
-          <div className="flex mt-4 sm:mt-0 space-x-2">
-            <Button
-              variant={filter === "all" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setFilter("all")}
-              className={filter === "all" ? "bg-gradient-to-r from-amber-600 to-orange-600 text-white" : ""}
-            >
-              All
-            </Button>
+                <div className="flex flex-wrap gap-2 sm:gap-0 sm:space-x-2">
+ <Button
+          variant={filter === "all" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setFilter("all")}
+          className={`flex-1 sm:flex-initial ${filter === "all" ? "bg-gradient-to-r from-amber-600 to-orange-600 text-white" : ""}`}
+        >
+          All
+        </Button>
             <Button
               variant={filter === "unread" ? "default" : "outline"}
               size="sm"
@@ -119,7 +119,7 @@ const NotificationsPage = () => {
           </div>
         </div>
 
-        <Card className="backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-white/20 dark:border-slate-700/50 shadow-xl">
+    <Card className="backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-white/20 dark:border-slate-700/50 shadow-xl">
           <CardHeader className="border-b border-slate-200/50 dark:border-slate-700/50">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center text-xl font-semibold text-slate-900 dark:text-white">
@@ -151,18 +151,18 @@ const NotificationsPage = () => {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-0">
-            {filteredNotifications.length > 0 ? (
-              <div className="divide-y divide-slate-200/50 dark:divide-slate-700/50">
-                {filteredNotifications.map((notification) => (
-                  <div 
-                    key={notification.id} 
-                    className={`group flex p-6 cursor-pointer hover:bg-gradient-to-r hover:from-slate-50/50 hover:to-transparent dark:hover:from-slate-700/30 dark:hover:to-transparent transition-all duration-200 ${
-                      !notification.read ? "bg-gradient-to-r from-amber-50/80 to-orange-50/80 dark:from-amber-900/20 dark:to-orange-900/20" : ""
-                    }`}
-                    onClick={() => handleNotificationClick(notification)}
-                  >
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mr-4 ${
+      <CardContent className="p-0">
+        {filteredNotifications.length > 0 ? (
+          <div className="divide-y divide-slate-200/50 dark:divide-slate-700/50">
+            {filteredNotifications.map((notification) => (
+              <div 
+                key={notification.id} 
+                className={`group flex flex-col sm:flex-row p-4 sm:p-6 cursor-pointer hover:bg-gradient-to-r hover:from-slate-50/50 hover:to-transparent dark:hover:from-slate-700/30 dark:hover:to-transparent transition-all duration-200 ${
+                  !notification.read ? "bg-gradient-to-r from-amber-50/80 to-orange-50/80 dark:from-amber-900/20 dark:to-orange-900/20" : ""
+                }`}
+                onClick={() => handleNotificationClick(notification)}
+              >
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mr-0 sm:mr-4 mb-2 sm:mb-0 ${
                       notification.type === "loan" 
                         ? "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400" 
                         : notification.type === "savings"
@@ -174,31 +174,31 @@ const NotificationsPage = () => {
                       {getNotificationIcon(notification.type)}
                     </div>
                     
-                    <div className="flex-1">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className={`font-semibold text-lg ${!notification.read ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300"}`}>
-                            {notification.title}
-                          </p>
-                          <p className="text-slate-600 dark:text-slate-400 mt-1 line-clamp-2">
-                            {notification.message}
-                          </p>
-                        </div>
-                        
-                        <div className="flex flex-col items-end">
-                          <span className="text-xs text-slate-500 dark:text-slate-400 mb-2">
-                            {getNotificationDate(notification.timestamp)}
-                          </span>
-                          
-                          {!notification.read && (
-                            <div className="w-3 h-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full shadow-sm"></div>
-                          )}
-                        </div>
-                      </div>
+                <div className="flex-1">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start">
+                    <div className="mb-2 sm:mb-0">
+                      <p className={`font-semibold text-base sm:text-lg ${!notification.read ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300"}`}>
+                        {notification.title}
+                      </p>
+                      <p className="text-slate-600 dark:text-slate-400 mt-1 text-sm sm:text-base line-clamp-2">
+                        {notification.message}
+                      </p>
+                    </div>
+                    
+                    <div className="flex flex-row sm:flex-col items-end justify-between sm:justify-start">
+                      <span className="text-xs text-slate-500 dark:text-slate-400 mb-0 sm:mb-2">
+                        {getNotificationDate(notification.timestamp)}
+                      </span>
+                      
+                      {!notification.read && (
+                        <div className="w-3 h-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full shadow-sm ml-2 sm:ml-0"></div>
+                      )}
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
+            ))}
+          </div>
             ) : (
               <div className="py-16 text-center">
                 <div className="w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-full flex items-center justify-center mx-auto mb-6">

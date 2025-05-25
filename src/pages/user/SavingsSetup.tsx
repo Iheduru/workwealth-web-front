@@ -167,9 +167,9 @@ const SavingsSetup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
+<div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-4 sm:p-6">
+  <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+    <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-emerald-900 to-slate-900 dark:from-white dark:via-emerald-100 dark:to-white bg-clip-text text-transparent">
               Savings Goals
@@ -177,37 +177,37 @@ const SavingsSetup = () => {
             <p className="text-slate-600 dark:text-slate-400">Track and manage your savings goals</p>
           </div>
           
-          <div className="flex space-x-3">
-            <Button 
-              variant={activeView === "list" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setActiveView("list")}
-              className={activeView === "list" ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white" : ""}
-            >
-              <BarChart3 className="mr-1 h-4 w-4" />
-              List View
-            </Button>
-            
-            <Button 
-              variant={activeView === "chart" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setActiveView("chart")}
-              className={activeView === "chart" ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white" : ""}
-            >
-              <PieChart className="mr-1 h-4 w-4" />
-              Chart View
-            </Button>
-            
-            {!isCreating && (
-              <Button 
-                onClick={() => setIsCreating(true)}
-                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <PlusIcon className="mr-1 h-4 w-4" />
-                New Goal
-              </Button>
-            )}
-          </div>
+      <div className="flex flex-wrap gap-2 sm:gap-0 sm:space-x-3">
+        <Button 
+          variant={activeView === "list" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setActiveView("list")}
+          className={`flex-1 sm:flex-initial ${activeView === "list" ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white" : ""}`}
+        >
+          <BarChart3 className="mr-1 h-4 w-4" />
+          <span className="sr-only sm:not-sr-only">List View</span>
+        </Button>
+        
+        <Button 
+          variant={activeView === "chart" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setActiveView("chart")}
+          className={`flex-1 sm:flex-initial ${activeView === "chart" ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white" : ""}`}
+        >
+          <PieChart className="mr-1 h-4 w-4" />
+          <span className="sr-only sm:not-sr-only">Chart View</span>
+        </Button>
+        
+        {!isCreating && (
+          <Button 
+            onClick={() => setIsCreating(true)}
+            className="flex-1 sm:flex-initial bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <PlusIcon className="mr-1 h-4 w-4" />
+            <span className="sr-only sm:not-sr-only">New Goal</span>
+          </Button>
+        )}
+      </div>
         </div>
 
         {isCreating && (
@@ -287,64 +287,62 @@ const SavingsSetup = () => {
           </Card>
         )}
 
-        {activeView === "list" ? (
-          <div className="grid gap-6 md:grid-cols-2">
-            {savingsGoals.map((goal) => {
-              const progress = calculateProgress(goal.currentAmount, goal.targetAmount);
-              return (
-                <Card key={goal.id} className="group backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-white/20 dark:border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 overflow-hidden">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">{goal.name}</CardTitle>
-                    <CardDescription className="text-slate-600 dark:text-slate-400">
-                      Target: {formatCurrency(goal.targetAmount)} • {getRemainingDays(goal.deadline)}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6 pb-4">
-                    <div>
-                      <div className="flex justify-between mb-2 text-sm">
-                        <span className="font-semibold text-slate-700 dark:text-slate-300">{formatCurrency(goal.currentAmount)}</span>
-                        <span className="font-bold text-slate-900 dark:text-white">{progress}%</span>
-                      </div>
-                      <Progress
-                        value={progress}
-                        className="h-3 bg-slate-200 dark:bg-slate-700"
-                        indicatorClassName={`${goal.color} transition-all duration-500`}
-                      />
-                    </div>
-                    
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-500 dark:text-slate-400">
-                        Remaining: {formatCurrency(goal.targetAmount - goal.currentAmount)}
-                      </span>
-                      <span className="text-slate-500 dark:text-slate-400">
-                        {new Date(goal.deadline).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex justify-between border-t border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/50 pt-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 border-red-200 dark:border-red-800"
-                      onClick={() => handleDeleteGoal(goal.id)}
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Delete
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className={`border-emerald-200 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400`}
-                      onClick={() => handleAddFunds(goal.id, 25000)}
-                    >
-                      <PlusIcon className="h-4 w-4 mr-1" />
-                      Add Funds
-                    </Button>
-                  </CardFooter>
-                </Card>
-              );
-            })}
-          </div>
+    {activeView === "list" ? (
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+        {savingsGoals.map((goal) => {
+          const progress = calculateProgress(goal.currentAmount, goal.targetAmount);
+          return (
+            <Card key={goal.id} className="group backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-white/20 dark:border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 sm:hover:scale-105 overflow-hidden">
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">{goal.name}</CardTitle>
+                <CardDescription className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
+                  Target: {formatCurrency(goal.targetAmount)} • {getRemainingDays(goal.deadline)}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 sm:space-y-6 pb-3 sm:pb-4">
+                <div>
+                  <div className="flex justify-between mb-1 sm:mb-2 text-xs sm:text-sm">
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">{formatCurrency(goal.currentAmount)}</span>
+                    <span className="font-bold text-slate-900 dark:text-white">{progress}%</span>
+                  </div>
+                  <Progress
+                    value={progress}
+                    className="h-2 sm:h-3 bg-slate-200 dark:bg-slate-700"
+                    indicatorClassName={`${goal.color} transition-all duration-500`}
+                  />
+                </div>
+                
+                <div className="flex justify-between text-xs sm:text-sm">
+                  <span className="text-slate-500 dark:text-slate-400">
+                    Remaining: {formatCurrency(goal.targetAmount - goal.currentAmount)}
+                  </span>
+                  <span className="text-slate-500 dark:text-slate-400">
+                    {new Date(goal.deadline).toLocaleDateString()}
+                  </span>
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-between border-t border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/50 pt-3 sm:pt-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 border-red-200 dark:border-red-800 px-2 sm:px-4"
+                >
+                  <Trash2 className="h-4 w-4 sm:mr-1" />
+                  <span className="sr-only sm:not-sr-only">Delete</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`border-emerald-200 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400 px-2 sm:px-4`}
+                >
+                  <PlusIcon className="h-4 w-4 sm:mr-1" />
+                  <span className="sr-only sm:not-sr-only">Add Funds</span>
+                </Button>
+              </CardFooter>
+            </Card>
+          );
+        })}
+      </div>
         ) : (
           <Card className="backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-white/20 dark:border-slate-700/50 shadow-xl">
             <CardHeader className="border-b border-slate-200/50 dark:border-slate-700/50">
